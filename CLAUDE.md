@@ -4,19 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Build & Development Commands
 
-- `go build ./cmd/claude-pad` - Build the binary
+- `go build ./cmd/camel-pad` - Build the binary
 - `go test ./...` - Run all tests
 - `go mod tidy` - Update dependencies
-- `./claude-pad --list-devices` - List available HID devices
-- `./claude-pad --config config.yaml` - Run with specific config file
-- `./claude-pad --verbose` - Run with verbose logging
-- `./claude-pad set-device` - Interactive device selection and config update
-- `./claude-pad set-device 0x1234 0x5678` - Set device IDs directly
+- `./camel-pad --list-devices` - List available HID devices
+- `./camel-pad --config config.yaml` - Run with specific config file
+- `./camel-pad --verbose` - Run with verbose logging
+- `./camel-pad set-device` - Interactive device selection and config update
+- `./camel-pad set-device 0x1234 0x5678` - Set device IDs directly
 
 ## Architecture
 
 ```
-cmd/claude-pad/           # Entry point, CLI flags
+cmd/camel-pad/           # Entry point, CLI flags
 internal/
 ├── config/               # YAML parsing, validation, hot-reload
 │   ├── config.go         # Config types and loading
@@ -48,3 +48,8 @@ internal/
 - Ring buffer for TUI output parsing (status extraction)
 - 1-bit packed frame buffer for OLED (row-major, MSB first)
 - Gesture state machine handles single/double/long press + chords
+- Use charmbracelet libraries (huh, lipglass, bubbletea, etc) to build console UI
+
+## Client Application
+
+The corresponding client application running on the camel pad is in the ./pad directory. It is written in CircuitPython.
