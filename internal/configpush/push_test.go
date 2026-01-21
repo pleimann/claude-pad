@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mike/claude-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/config"
 )
 
 func TestGeneratePythonConfig(t *testing.T) {

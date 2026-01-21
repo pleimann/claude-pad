@@ -11,14 +11,14 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/mike/claude-pad/internal/action"
-	"github.com/mike/claude-pad/internal/config"
-	"github.com/mike/claude-pad/internal/configpush"
-	"github.com/mike/claude-pad/internal/display"
-	"github.com/mike/claude-pad/internal/gesture"
-	"github.com/mike/claude-pad/internal/hid"
-	"github.com/mike/claude-pad/internal/pty"
-	"github.com/mike/claude-pad/internal/ui"
+	"github.com/pleimann/camel-pad/internal/action"
+	"github.com/pleimann/camel-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/configpush"
+	"github.com/pleimann/camel-pad/internal/display"
+	"github.com/pleimann/camel-pad/internal/gesture"
+	"github.com/pleimann/camel-pad/internal/hid"
+	"github.com/pleimann/camel-pad/internal/pty"
+	"github.com/pleimann/camel-pad/internal/ui"
 )
 
 const Version = "0.1.0"

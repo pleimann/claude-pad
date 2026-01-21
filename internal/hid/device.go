@@ -18,6 +18,10 @@ type Device struct {
 	closed    bool
 }
 
+func executableName() string {
+	return "camel-pad"
+}
+
 // NewDevice opens a connection to a HID device with the specified vendor and product IDs
 func NewDevice(vendorID, productID uint16) (*Device, error) {
 	devices := hid.Enumerate(vendorID, productID)
@@ -28,8 +32,8 @@ func NewDevice(vendorID, productID uint16) (*Device, error) {
 			return nil, fmt.Errorf("no HID devices found on system - check USB connection")
 		}
 		return nil, fmt.Errorf("no device found with VendorID=0x%04X, ProductID=0x%04X\n"+
-			"  Run 'claude-pad --list-devices' to see available devices\n"+
-			"  Run 'claude-pad set-device' to configure the correct device",
+			"  Run '"+executableName()+" --list-devices' to see available devices\n"+
+			"  Run '"+executableName()+" set-device' to configure the correct device",
 			vendorID, productID)
 	}
 

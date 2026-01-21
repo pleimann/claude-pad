@@ -3,7 +3,7 @@ package pty
 import (
 	"time"
 
-	"github.com/mike/claude-pad/internal/action"
+	"github.com/pleimann/camel-pad/internal/action"
 )
 
 // Writer wraps a Manager to provide key writing with optional delay

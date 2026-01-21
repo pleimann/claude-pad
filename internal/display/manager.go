@@ -6,9 +6,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mike/claude-pad/internal/config"
-	"github.com/mike/claude-pad/internal/hid"
-	"github.com/mike/claude-pad/internal/pty"
+	"github.com/pleimann/camel-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/hid"
+	"github.com/pleimann/camel-pad/internal/pty"
 )
 
 // DeviceWriter is the interface for sending frames to the device

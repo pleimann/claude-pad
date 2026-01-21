@@ -3,16 +3,16 @@
 
 device:
   # USB HID device identifiers
-  # Use `claude-pad --list-devices` to find your device
+  # Use `camel-pad --list-devices` to find your device
   vendor_id: 0x1234
   product_id: 0x5678
   poll_interval_ms: 10
 
 timing:
   # Gesture detection timing (in milliseconds)
-  double_press_window_ms: 300   # Window to detect double-press
-  long_press_threshold_ms: 500  # Hold time for long-press
-  chord_window_ms: 50           # Window to detect simultaneous presses
+  double_press_window_ms: 300 # Window to detect double-press
+  long_press_threshold_ms: 500 # Hold time for long-press
+  chord_window_ms: 50 # Window to detect simultaneous presses
 
 tui:
   # The TUI application to control
@@ -31,7 +31,7 @@ buttons:
     double_press:
       keys: ["ctrl+z"]
     long_press:
-      keys: ["q", "enter"]  # Sequence of keys
+      keys: ["q", "enter"] # Sequence of keys
 
   - index: 1
     name: btn_b
@@ -64,16 +64,16 @@ buttons:
 # buttons: list of button indices pressed together
 # keys: key sequence to send
 chords:
-  - buttons: [0, 1]  # btn_a + btn_b together
+  - buttons: [0, 1] # btn_a + btn_b together
     keys: ["ctrl+r"]
 
-  - buttons: [0, 2]  # btn_a + btn_c together
+  - buttons: [0, 2] # btn_a + btn_c together
     keys: ["ctrl+l"]
 
-  - buttons: [1, 2]  # btn_b + btn_c together
+  - buttons: [1, 2] # btn_b + btn_c together
     keys: ["ctrl+g"]
 
-  - buttons: [0, 1, 2]  # Three-button chord
+  - buttons: [0, 1, 2] # Three-button chord
     keys: ["ctrl+alt+delete"]
 
 # Display configuration
@@ -89,7 +89,7 @@ display:
       y: 0
       width: 128
       height: 32
-      source: tui_status  # Will parse "STATUS: text" lines from TUI output
+      source: tui_status # Will parse "STATUS: text" lines from TUI output
 
     - name: mode
       x: 0

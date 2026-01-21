@@ -1,4 +1,4 @@
-module github.com/mike/claude-pad
+module github.com/pleimann/camel-pad
 
 go 1.25.5
 

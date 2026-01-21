@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mike/claude-pad/internal/config"
-	"github.com/mike/claude-pad/internal/hid"
+	"github.com/pleimann/camel-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/hid"
 )
 
 // Engine orchestrates gesture detection including chords

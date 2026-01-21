@@ -4,8 +4,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mike/claude-pad/internal/config"
-	"github.com/mike/claude-pad/internal/gesture"
+	"github.com/pleimann/camel-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/gesture"
 )
 
 func TestMapperMap(t *testing.T) {

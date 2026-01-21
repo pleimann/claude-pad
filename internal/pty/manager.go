@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/creack/pty"
-	"github.com/mike/claude-pad/internal/action"
+	"github.com/pleimann/camel-pad/internal/action"
 )
 
 // Manager manages a PTY and the TUI process running in it

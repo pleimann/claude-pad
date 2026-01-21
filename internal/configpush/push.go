@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/mike/claude-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/config"
 )
 
 const configFileName = "config.py"

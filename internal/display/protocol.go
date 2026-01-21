@@ -1,7 +1,7 @@
 package display
 
 import (
-	"github.com/mike/claude-pad/internal/hid"
+	"github.com/pleimann/camel-pad/internal/hid"
 )
 
 // FrameEncoder encodes rendered frames for transmission to the device

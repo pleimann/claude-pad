@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/pleimann/camel-pad/internal/utils"
 )
 
 // PrintUsage displays the styled help/usage text
@@ -13,7 +14,7 @@ func PrintUsage(version string) {
 	banner := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(ColorPrimary).
-		Render("claude-pad")
+		Render(utils.ExecutableName())
 
 	versionTag := lipgloss.NewStyle().
 		Foreground(ColorMuted).
@@ -25,10 +26,10 @@ func PrintUsage(version string) {
 
 	// Usage section
 	printSection("Usage", []string{
-		"claude-pad [flags]              Run the middleware",
-		"claude-pad set-device [args]    Configure the HID device",
-		"claude-pad config-push          Push config to CircuitPython device",
-		"claude-pad help                 Show this help message",
+		utils.ExecutableName() + " [flags]              Run the middleware",
+		utils.ExecutableName() + " set-device [args]    Configure the HID device",
+		utils.ExecutableName() + " config-push          Push config to CircuitPython device",
+		utils.ExecutableName() + " help                 Show this help message",
 	})
 
 	// Flags section
@@ -63,12 +64,12 @@ func printCommandSection() {
 
 	fmt.Printf("  %s\n", cmdStyle.Render("set-device"))
 	fmt.Printf("      Set the HID device in the config file\n")
-	fmt.Printf("      Run %s for more information\n", Code("claude-pad set-device --help"))
+	fmt.Printf("      Run %s for more information\n", Code(utils.ExecutableName()+" set-device --help"))
 	fmt.Println()
 
 	fmt.Printf("  %s\n", cmdStyle.Render("config-push"))
 	fmt.Printf("      Push button configuration to the CircuitPython device\n")
-	fmt.Printf("      Run %s for more information\n", Code("claude-pad config-push --help"))
+	fmt.Printf("      Run %s for more information\n", Code(utils.ExecutableName()+" config-push --help"))
 	fmt.Println()
 }
 
@@ -79,11 +80,11 @@ func printExamplesSection() {
 		cmd  string
 		desc string
 	}{
-		{"claude-pad", "Run with default config.yaml"},
-		{"claude-pad -config my.yaml", "Run with custom config file"},
-		{"claude-pad -list-devices", "List connected HID devices"},
-		{"claude-pad set-device", "Interactive device selection"},
-		{"claude-pad set-device 0x1234 0x5678", "Set device by vendor/product ID"},
+		{utils.ExecutableName(), "Run with default config.yaml"},
+		{utils.ExecutableName() + " -config my.yaml", "Run with custom config file"},
+		{utils.ExecutableName() + " -list-devices", "List connected HID devices"},
+		{utils.ExecutableName() + " set-device", "Interactive device selection"},
+		{utils.ExecutableName() + " set-device 0x1234 0x5678", "Set device by vendor/product ID"},
 	}
 
 	cmdStyle := lipgloss.NewStyle().
@@ -105,7 +106,7 @@ func printExamplesSection() {
 
 // PrintSetDeviceUsage displays the styled help text for set-device subcommand
 func PrintSetDeviceUsage() {
-	fmt.Println(Bold("Usage:"), "claude-pad set-device [options] [vendor_id product_id]")
+	fmt.Println(Bold("Usage:"), utils.ExecutableName()+" set-device [options] [vendor_id product_id]")
 	fmt.Println()
 	fmt.Println("Set the HID device in the configuration file.")
 	fmt.Println()
@@ -127,9 +128,9 @@ func PrintSetDeviceUsage() {
 		cmd  string
 		desc string
 	}{
-		{"claude-pad set-device", "Interactive selection"},
-		{"claude-pad set-device 0x1234 0x5678", "Direct specification"},
-		{"claude-pad set-device -config my.yaml", "Use different config"},
+		{utils.ExecutableName() + " set-device", "Interactive selection"},
+		{utils.ExecutableName() + " set-device 0x1234 0x5678", "Direct specification"},
+		{utils.ExecutableName() + " set-device -config my.yaml", "Use different config"},
 	}
 
 	cmdStyle := lipgloss.NewStyle().
@@ -154,7 +155,7 @@ func PrintVersion(version string) {
 	banner := lipgloss.NewStyle().
 		Bold(true).
 		Foreground(ColorPrimary).
-		Render("claude-pad")
+		Render(utils.ExecutableName())
 
 	versionTag := lipgloss.NewStyle().
 		Foreground(ColorSuccess).
@@ -178,7 +179,7 @@ func PrintFatalError(context, message string) {
 
 // PrintConfigPushUsage displays the styled help text for config-push subcommand
 func PrintConfigPushUsage() {
-	fmt.Println(Bold("Usage:"), "claude-pad config-push [options]")
+	fmt.Println(Bold("Usage:"), utils.ExecutableName()+" config-push [options]")
 	fmt.Println()
 	fmt.Println("Push button configuration to the CircuitPython device.")
 	fmt.Println()
@@ -195,8 +196,8 @@ func PrintConfigPushUsage() {
 		cmd  string
 		desc string
 	}{
-		{"claude-pad config-push", "Push using default config.yaml"},
-		{"claude-pad config-push -config my.yaml", "Push using custom config"},
+		{utils.ExecutableName() + " config-push", "Push using default config.yaml"},
+		{utils.ExecutableName() + " config-push -config my.yaml", "Push using custom config"},
 	}
 
 	cmdStyle := lipgloss.NewStyle().

@@ -3,7 +3,7 @@ package display
 import (
 	"testing"
 
-	"github.com/mike/claude-pad/internal/hid"
+	"github.com/pleimann/camel-pad/internal/hid"
 )
 
 func TestFrameEncoderEncodeFullFrame(t *testing.T) {

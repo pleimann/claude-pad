@@ -29,10 +29,7 @@ A Go middleware application that bridges a custom USB HID macropad with a TUI ap
 ## Project Structure
 
 ```
-claude-pad/
-├── cmd/
-│   └── claude-pad/
-│       └── main.go              # Entry point, CLI flags
+camel-pad/
 ├── internal/
 │   ├── config/
 │   │   ├── config.go            # TOML parsing, validation
@@ -57,6 +54,7 @@ claude-pad/
 │       └── protocol.go          # Frame encoding for OLED
 ├── config.example.toml
 ├── go.mod
+├── main.go                  # Entry point, CLI flags
 └── CLAUDE.md
 ```
 
@@ -133,6 +131,7 @@ content = "Ready"
 ### 2. HID Protocol (Device ↔ Host)
 
 **Device → Host (Button Events):**
+
 ```
 Byte 0: Report ID (0x01)
 Byte 1: Event type (0x01=press, 0x02=release)
@@ -141,6 +140,7 @@ Byte 4-7: Timestamp (ms since boot, little-endian u32)
 ```
 
 **Host → Device (Display Updates):**
+
 ```
 Byte 0: Report ID (0x02)
 Byte 1: Command (0x01=full frame, 0x02=partial, 0x03=clear)
@@ -172,6 +172,7 @@ Byte 10+: Pixel data (1-bit packed, row-major)
 ```
 
 **Chord Detection:**
+
 - Track all button states in a sliding window
 - If multiple buttons are pressed within `chord_window_ms`, treat as chord
 - Match against configured chord combinations
@@ -179,6 +180,7 @@ Byte 10+: Pixel data (1-bit packed, row-major)
 ### 4. Key Sequence Format
 
 Keys in config use a simple format:
+
 - Modifiers: `ctrl+`, `alt+`, `shift+`, `meta+`
 - Special keys: `enter`, `tab`, `esc`, `up`, `down`, `left`, `right`, `backspace`, `delete`, `home`, `end`, `pageup`, `pagedown`, `f1`-`f12`
 - Printable: single character like `a`, `1`, `/`
@@ -216,28 +218,33 @@ require (
 ## Implementation Order
 
 ### Phase 1: Core Infrastructure
-1. `cmd/claude-pad/main.go` - CLI entry point with flags
+
+1. `main.go` - CLI entry point with flags
 2. `internal/config/config.go` - TOML parsing and types
 3. `internal/hid/device.go` - Basic HID connection
 4. `internal/hid/protocol.go` - Message types
 
 ### Phase 2: Input Pipeline
+
 5. `internal/gesture/types.go` - Gesture type definitions
 6. `internal/gesture/engine.go` - State machine implementation
 7. `internal/gesture/detector.go` - Timing logic
 8. `internal/action/mapper.go` - Config-based gesture→action lookup
 
 ### Phase 3: Output Pipeline
+
 9. `internal/pty/manager.go` - PTY spawn and lifecycle
 10. `internal/pty/writer.go` - Key sequence writing
 11. `internal/action/executor.go` - Execute mapped actions
 
 ### Phase 4: Display
+
 12. `internal/display/renderer.go` - Text to frame buffer
 13. `internal/display/protocol.go` - Frame encoding
 14. `internal/display/manager.go` - Orchestration and status parsing
 
 ### Phase 5: Polish
+
 15. `internal/config/watcher.go` - Hot-reload support
 16. `internal/hid/discovery.go` - Device enumeration/reconnection
 17. Logging, error handling, graceful shutdown

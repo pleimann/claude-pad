@@ -1,8 +1,8 @@
 package action
 
 import (
-	"github.com/mike/claude-pad/internal/config"
-	"github.com/mike/claude-pad/internal/gesture"
+	"github.com/pleimann/camel-pad/internal/config"
+	"github.com/pleimann/camel-pad/internal/gesture"
 )
 
 // Mapper maps gestures to key sequences based on configuration
