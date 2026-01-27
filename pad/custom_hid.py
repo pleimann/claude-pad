@@ -3,22 +3,18 @@ Custom HID device support for Camel Pad.
 
 Provides classes for:
 - CamelPadKeyboard: Extended keyboard with support for 10 simultaneous keycodes
-- CamelPadHostReceiver: Receives messages from the host via Feature/OUT reports
+- CamelPadHostReceiver: Receives messages from the host via OUT reports
 """
-import struct
-import time
 import usb_hid
 from adafruit_hid import find_device
 
 
 # Report IDs (must match boot.py)
 REPORT_ID_KEYBOARD = 1
-REPORT_ID_FEATURE = 2
-REPORT_ID_OUT = 3
+REPORT_ID_OUT = 2
 
 # Report sizes
 KEYBOARD_REPORT_SIZE = 12  # 1 modifier + 1 reserved + 10 keycodes
-FEATURE_REPORT_SIZE = 1024
 OUT_REPORT_SIZE = 64
 
 # Modifier key bits (same as standard HID keyboard)
@@ -42,26 +38,6 @@ _KEYCODE_TO_MODIFIER = {
     0xE6: MODIFIER_RIGHT_ALT,
     0xE7: MODIFIER_RIGHT_GUI,
 }
-
-
-def _find_camel_pad_device():
-    """Find the Camel Pad custom HID device."""
-    for device in usb_hid.devices:
-        # Look for our custom device by checking report lengths
-        # Our device has IN report length of 12 (for report ID 1)
-        if (hasattr(device, 'send_report') and
-            hasattr(device, 'usage_page') and
-            device.usage_page == 0x01 and
-            device.usage == 0x06):
-            # Check if it's our extended keyboard (12 byte reports vs 8 byte standard)
-            try:
-                # Try to identify by the report structure
-                # The built-in keyboard uses 8-byte reports, ours uses 12
-                if hasattr(device, '_report_length') and device._report_length == 12:
-                    return device
-            except:
-                pass
-    return None
 
 
 class CamelPadKeyboard:
@@ -193,24 +169,15 @@ class CamelPadKeyboard:
 
 class CamelPadHostReceiver:
     """
-    Receives messages from the host via Feature or OUT reports.
-
-    Supports two modes:
-    - Feature reports: Up to 1024 bytes via USB control transfers
-    - OUT reports: 64-byte packets for streaming data
+    Receives messages from the host via OUT reports.
 
     Usage:
         receiver = CamelPadHostReceiver(usb_hid.devices)
 
-        # Check for Feature report (1024 bytes)
-        data = receiver.get_feature_report()
-        if data:
-            print(f"Received feature data: {data}")
-
         # Check for OUT report (64 bytes)
         data = receiver.get_out_report()
         if data:
-            print(f"Received OUT data: {data}")
+            print(f"Received data: {data}")
     """
 
     def __init__(self, devices):
@@ -233,30 +200,8 @@ class CamelPadHostReceiver:
         if self._device is None:
             raise RuntimeError("Could not find Camel Pad HID device")
 
-        # Buffers for receiving data
-        self._feature_buffer = bytearray(FEATURE_REPORT_SIZE)
+        # Buffer for receiving data
         self._out_buffer = bytearray(OUT_REPORT_SIZE)
-
-        # Track if we've received new data
-        self._last_feature_data = None
-        self._last_out_data = None
-
-    def get_feature_report(self):
-        """
-        Get the last Feature report data from the host.
-
-        Returns:
-            bytes: The feature report data (1024 bytes) or None if no new data
-        """
-        try:
-            # Try to read the feature report
-            count = self._device.get_last_received_report(self._feature_buffer, REPORT_ID_FEATURE)
-            if count > 0:
-                return bytes(self._feature_buffer[:count])
-        except (AttributeError, RuntimeError):
-            # Device doesn't support get_last_received_report or no data available
-            pass
-        return None
 
     def get_out_report(self):
         """
@@ -274,11 +219,6 @@ class CamelPadHostReceiver:
             # Device doesn't support get_last_received_report or no data available
             pass
         return None
-
-    @property
-    def feature_report_size(self):
-        """Maximum size of feature report in bytes."""
-        return FEATURE_REPORT_SIZE
 
     @property
     def out_report_size(self):
@@ -318,17 +258,9 @@ class CamelPadDevice:
         """
         Get any pending message from the host.
 
-        Checks both Feature and OUT reports, preferring Feature reports.
-
         Returns:
             bytes: Message data or None if no message
         """
-        # Check feature report first (larger messages)
-        data = self.host_receiver.get_feature_report()
-        if data:
-            return data
-
-        # Check OUT report (streaming data)
         return self.host_receiver.get_out_report()
 
     def send_keys(self, *keycodes):

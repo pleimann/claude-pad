@@ -82,15 +82,10 @@ class PadController:
         Check for and return any pending message from the host.
 
         Returns:
-            bytes: The message data or None if no message is available.
+            bytes: The message data (up to 64 bytes) or None if no message is available.
                    Only works when using custom HID.
         """
         if self.host_receiver is not None:
-            # Check feature report first (larger messages up to 1024 bytes)
-            data = self.host_receiver.get_feature_report()
-            if data:
-                return data
-            # Check OUT report (64-byte packets)
             return self.host_receiver.get_out_report()
         return None
 

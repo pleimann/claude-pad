@@ -38,8 +38,7 @@ lib/                 # Pre-compiled Adafruit libraries (.mpy)
 The pad supports an extended HID protocol configured in `boot.py`:
 
 - **Extended Keyboard (Report ID 1)**: Supports up to 10 simultaneous keycodes (vs standard 6)
-- **Feature Report (Report ID 2)**: Receives messages up to 1024 bytes from host
-- **OUT Report (Report ID 3)**: Receives streaming data in 64-byte packets
+- **OUT Report (Report ID 2)**: Receives 64-byte messages from host
 
 The `CamelPadKeyboard` class in `custom_hid.py` provides the same interface as the standard keyboard:
 
@@ -54,8 +53,7 @@ Host messages can be received via `CamelPadHostReceiver`:
 ```python
 from custom_hid import CamelPadHostReceiver
 receiver = CamelPadHostReceiver(usb_hid.devices)
-data = receiver.get_feature_report()  # Up to 1024 bytes
-data = receiver.get_out_report()      # 64 bytes
+data = receiver.get_out_report()  # 64 bytes
 ```
 
 ## Configuration
