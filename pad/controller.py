@@ -65,3 +65,4 @@ class PadController:
     def configured_buttons(self):
         """List of button indices with configured actions."""
         return list(self.buttons_config.keys())
+

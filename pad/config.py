@@ -30,3 +30,4 @@ BUTTONS = {
         "long_press": [Keycode.ESCAPE],
     },
 }
+

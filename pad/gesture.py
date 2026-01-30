@@ -115,3 +115,4 @@ class ButtonGestureDetector:
         """Send a key combination."""
         if keycodes:
             self.keyboard.send(*keycodes)
+

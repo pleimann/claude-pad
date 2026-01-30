@@ -1,38 +1,53 @@
-"""
-Camel Pad - CircuitPython HID Keyboard Controller
-
-Supports single press, double press, and long press gestures for multiple buttons.
-Configuration is loaded from config.py.
-"""
-import time
 import board
-from adafruit_hid.keycode import Keycode
-from controller import PadController
+import displayio
+import vectorio
 
-# Try to import config, use defaults if not present
-try:
-    from config import TIMING, BUTTONS, BUTTON_PINS
-    
-except ImportError:
-    TIMING = {
-        "double_press_window_ms": 300,
-        "long_press_threshold_ms": 500,
-    }
-    BUTTON_PINS = [board.BOOT0]
-    BUTTONS = {
-        0: {
-            "press": [Keycode.CONTROL, Keycode.GRAVE_ACCENT],
-        },
-    }
+# Display is already initialized - just use it
+display = board.DISPLAY
+print(f"Display: {display.width}x{display.height}")
 
+# Simple test - fill with colors
 
-# Initialize the controller
-controller = PadController(BUTTON_PINS, BUTTONS, TIMING)
+# Create a simple colored rectangle
+palette = displayio.Palette(1)
+palette[0] = 0xFF0000  # Red
 
-print("Camel Pad ready!")
-print(f"Buttons: {controller.button_count}, Configured: {controller.configured_buttons}")
+rect = vectorio.Rectangle(
+    pixel_shader=palette,
+    width=display.width,
+    height=display.height // 3,
+    x=0,
+    y=0
+)
 
-# Main loop
-while True:
-    controller.update()
-    time.sleep(0.01)  # 10ms loop delay
+palette2 = displayio.Palette(1)
+palette2[0] = 0x00FF00  # Green
+
+rect2 = vectorio.Rectangle(
+    pixel_shader=palette2,
+    width=display.width,
+    height=display.height // 3,
+    x=0,
+    y=display.height // 3
+)
+
+palette3 = displayio.Palette(1)
+palette3[0] = 0x0000FF  # Blue
+
+rect3 = vectorio.Rectangle(
+    pixel_shader=palette3,
+    width=display.width,
+    height=display.height // 3,
+    x=0,
+    y=2 * display.height // 3
+)
+
+# Create a group and add shapes
+group = displayio.Group()
+group.append(rect)
+group.append(rect2)
+group.append(rect3)
+
+display.root_group = group
+
+print("Display test complete - showing RGB stripes")
