@@ -27,6 +27,9 @@ func main() {
 	// Check for subcommands first
 	if len(os.Args) > 1 {
 		switch os.Args[1] {
+		case "list-devices":
+			runListDevices()
+			return
 		case "set-device", "select-device":
 			runSetDevice(os.Args[2:])
 			return
@@ -41,7 +44,6 @@ func main() {
 
 	// Main command flags
 	configPath := flag.String("config", "config.yaml", "path to configuration file")
-	listDevices := flag.Bool("list-devices", false, "list available HID devices and exit")
 	verbose := flag.Bool("verbose", false, "enable verbose logging")
 	version := flag.Bool("version", false, "print version and exit")
 
@@ -50,25 +52,6 @@ func main() {
 
 	if *version {
 		ui.PrintVersion(Version)
-		os.Exit(0)
-	}
-
-	if *listDevices {
-		devices, err := hid.ListDevices()
-		if err != nil {
-			ui.PrintFatalError("Failed to list devices", err.Error())
-			os.Exit(1)
-		}
-		uiDevices := make([]ui.DeviceInfo, len(devices))
-		for i, d := range devices {
-			uiDevices[i] = ui.DeviceInfo{
-				VendorID:     d.VendorID,
-				ProductID:    d.ProductID,
-				Manufacturer: d.Manufacturer,
-				Product:      d.Product,
-			}
-		}
-		ui.PrintDeviceList(uiDevices)
 		os.Exit(0)
 	}
 
@@ -114,6 +97,25 @@ func main() {
 
 func printUsage() {
 	ui.PrintUsage(Version)
+}
+
+// runListDevices handles the list-devices subcommand
+func runListDevices() {
+	devices, err := hid.ListDevices()
+	if err != nil {
+		ui.PrintFatalError("Failed to list devices", err.Error())
+		os.Exit(1)
+	}
+	uiDevices := make([]ui.DeviceInfo, len(devices))
+	for i, d := range devices {
+		uiDevices[i] = ui.DeviceInfo{
+			VendorID:     d.VendorID,
+			ProductID:    d.ProductID,
+			Manufacturer: d.Manufacturer,
+			Product:      d.Product,
+		}
+	}
+	ui.PrintDeviceList(uiDevices)
 }
 
 // runSetDevice handles the set-device subcommand

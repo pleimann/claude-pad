@@ -27,6 +27,7 @@ func PrintUsage(version string) {
 	// Usage section
 	printSection("Usage", []string{
 		utils.ExecutableName() + " [flags]              Run the middleware",
+		utils.ExecutableName() + " list-devices         List available HID devices",
 		utils.ExecutableName() + " set-device [args]    Configure the HID device",
 		utils.ExecutableName() + " config-push          Push config to CircuitPython device",
 		utils.ExecutableName() + " help                 Show this help message",
@@ -35,7 +36,6 @@ func PrintUsage(version string) {
 	// Flags section
 	printSection("Flags", []string{
 		"-config string    Path to configuration file (default \"config.yaml\")",
-		"-list-devices     List available HID devices and exit",
 		"-verbose          Enable verbose logging",
 		"-version          Print version and exit",
 	})
@@ -62,6 +62,10 @@ func printCommandSection() {
 		Foreground(ColorSecondary).
 		Bold(true)
 
+	fmt.Printf("  %s\n", cmdStyle.Render("list-devices"))
+	fmt.Printf("      List available HID devices\n")
+	fmt.Println()
+
 	fmt.Printf("  %s\n", cmdStyle.Render("set-device"))
 	fmt.Printf("      Set the HID device in the config file\n")
 	fmt.Printf("      Run %s for more information\n", Code(utils.ExecutableName()+" set-device --help"))
@@ -82,7 +86,7 @@ func printExamplesSection() {
 	}{
 		{utils.ExecutableName(), "Run with default config.yaml"},
 		{utils.ExecutableName() + " -config my.yaml", "Run with custom config file"},
-		{utils.ExecutableName() + " -list-devices", "List connected HID devices"},
+		{utils.ExecutableName() + " list-devices", "List connected HID devices"},
 		{utils.ExecutableName() + " set-device", "Interactive device selection"},
 		{utils.ExecutableName() + " set-device 0x1234 0x5678", "Set device by vendor/product ID"},
 	}
