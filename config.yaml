@@ -3,100 +3,56 @@
 
 device:
   # USB HID device identifiers
-  # Use `camel-pad --list-devices` to find your device
+  # Use `camel-pad list-devices` to find your device
   vendorId: 0x303A
   productId: 0x8231
 
-timing:
-  # Gesture detection timing (in milliseconds)
-  double_press_window_ms: 300 # Window to detect double-press
-  long_press_threshold_ms: 500 # Hold time for long-press
-  chord_window_ms: 50 # Window to detect simultaneous presses
-
-tui:
-  # The TUI application to control
-  command: "my-tui-app"
-  args: ["--flag", "value"]
-  # working_dir: "/path/to/dir"  # Optional
+# Gesture detection timing (in milliseconds)
+gestures:
+  longPressMs: 500 # Hold time for long-press
+  doublePressMs: 300 # Window to detect double-press
 
 # Button mappings
-# index: 0-based button number on the macropad
+# key: 0-based button number on the macropad
 # name: optional human-readable name for logging
-buttons:
-  - index: 0
-    name: btn_a
+keys:
+  key0:
     press:
       keys: ["ctrl+`"]
-    double_press:
+      action: "toggleConsole"
+      label: "Console"
+    doublePress:
       keys: ["cmd+z"]
-    long_press:
-      keys: ["q", "enter"] # Sequence of keys
+      action: "undo"
+      label: "Undo"
+    longPress:
+      keys: ["q", "enter"]
+      action: "quitApp"
+      label: "Quit App"
 
-  - index: 1
-    name: btn_b
-    press:
-      keys: ["down"]
-    double_press:
-      keys: ["pagedown"]
-    long_press:
-      keys: ["end"]
+  # key1:
+  #   press:
+  #     keys: ["down"]
+  #   doublePress:
+  #     keys: ["pagedown"]
+  #   longPress:
+  #     keys: ["end"]
 
-  - index: 2
-    name: btn_c
-    press:
-      keys: ["up"]
-    double_press:
-      keys: ["pageup"]
-    long_press:
-      keys: ["home"]
+  # key2:
+  #   press:
+  #     keys: ["up"]
+  #   doublePress:
+  #     keys: ["pageup"]
+  #   longPress:
+  #     keys: ["home"]
 
-  - index: 3
-    name: btn_d
-    press:
-      keys: ["enter"]
-    double_press:
-      keys: ["tab"]
-    long_press:
-      keys: ["esc"]
-
-# Chord mappings
-# buttons: list of button indices pressed together
-# keys: key sequence to send
-chords:
-  - buttons: [0, 1] # btn_a + btn_b together
-    keys: ["ctrl+r"]
-
-  - buttons: [0, 2] # btn_a + btn_c together
-    keys: ["ctrl+l"]
-
-  - buttons: [1, 2] # btn_b + btn_c together
-    keys: ["ctrl+g"]
-
-  - buttons: [0, 1, 2] # Three-button chord
-    keys: ["ctrl+alt+delete"]
-
-# Display configuration
-display:
-  width: 128
-  height: 64
-  update_interval_ms: 100
-  # Display regions
-  # source: "tui_status" (parsed from TUI output), "static" (fixed text), "system" (system info)
-  regions:
-    - name: status
-      x: 0
-      y: 0
-      width: 128
-      height: 32
-      source: tui_status # Will parse "STATUS: text" lines from TUI output
-
-    - name: mode
-      x: 0
-      y: 32
-      width: 128
-      height: 32
-      source: static
-      content: "Ready"
+  # key3:
+  #   press:
+  #     keys: ["enter"]
+  #   doublePress:
+  #     keys: ["tab"]
+  #   longPress:
+  #     keys: ["esc"]
 
 # Key Format Reference
 # ====================

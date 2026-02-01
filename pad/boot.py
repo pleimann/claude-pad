@@ -1,4 +1,8 @@
 import usb_hid
+import supervisor
+
+# Disable the terminal output on the built-in display
+supervisor.runtime.display.root_group = None
 
 # Vendor-specific HID report descriptor
 # UsagePage: 0xFF00 (Vendor Defined)

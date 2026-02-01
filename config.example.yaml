@@ -3,29 +3,20 @@
 
 device:
   # USB HID device identifiers
-  # Use `camel-pad --list-devices` to find your device
-  vendor_id: 0x1234
-  product_id: 0x5678
-  poll_interval_ms: 10
+  # Use `camel-pad list-devices` to find your device
+  vendorId: 0x1234
+  productId: 0x5678
 
-timing:
-  # Gesture detection timing (in milliseconds)
-  double_press_window_ms: 300 # Window to detect double-press
-  long_press_threshold_ms: 500 # Hold time for long-press
-  chord_window_ms: 50 # Window to detect simultaneous presses
-
-tui:
-  # The TUI application to control
-  command: "my-tui-app"
-  args: ["--flag", "value"]
-  # working_dir: "/path/to/dir"  # Optional
+# Gesture detection timing (in milliseconds)
+gestures:
+  longPressMs: 500 # Hold time for long-press
+  doublePressMs: 300 # Window to detect double-press
 
 # Button mappings
 # index: 0-based button number on the macropad
 # name: optional human-readable name for logging
-buttons:
-  - index: 0
-    name: btn_a
+keys:
+  key0: 
     press:
       keys: ["ctrl+c"]
     double_press:
@@ -33,8 +24,7 @@ buttons:
     long_press:
       keys: ["q", "enter"] # Sequence of keys
 
-  - index: 1
-    name: btn_b
+  key1:
     press:
       keys: ["down"]
     double_press:
@@ -42,8 +32,7 @@ buttons:
     long_press:
       keys: ["end"]
 
-  - index: 2
-    name: btn_c
+  key1:
     press:
       keys: ["up"]
     double_press:
@@ -51,8 +40,7 @@ buttons:
     long_press:
       keys: ["home"]
 
-  - index: 3
-    name: btn_d
+  key3:
     press:
       keys: ["enter"]
     double_press:
@@ -75,29 +63,6 @@ chords:
 
   - buttons: [0, 1, 2] # Three-button chord
     keys: ["ctrl+alt+delete"]
-
-# Display configuration
-display:
-  width: 128
-  height: 64
-  update_interval_ms: 100
-  # Display regions
-  # source: "tui_status" (parsed from TUI output), "static" (fixed text), "system" (system info)
-  regions:
-    - name: status
-      x: 0
-      y: 0
-      width: 128
-      height: 32
-      source: tui_status # Will parse "STATUS: text" lines from TUI output
-
-    - name: mode
-      x: 0
-      y: 32
-      width: 128
-      height: 32
-      source: static
-      content: "Ready"
 
 # Key Format Reference
 # ====================

@@ -1,4 +1,6 @@
-Adafruit CircuitPython 10.1.0-beta.1-22-gc46561bca8-dirty on 2026-01-28; Waveshare ESP32-S3-LCD-3.16 with ESP32S3
+Adafruit CircuitPython 10.1.0-beta.1-28-gea62b610c0-dirty on 2026-01-31; CamelPad ESP32-S3-LCD-3.16 v1.0 with ESP32S3
 Board ID:waveshare_esp32_s3_lcd_3_16
 UID:085BE4ADF543
 MAC:80:B5:4E:DA:5F:34
+boot.py output:
+boot.py: Enabled vendor-specific HID device (usagePage=0xFF00)
