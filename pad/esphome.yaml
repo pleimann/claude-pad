@@ -5,6 +5,15 @@ esphome:
     build_flags: "-DBOARD_HAS_PSRAM"
     board_build.arduino.memory_type: qio_opi
 
+external_components:
+  - source:
+      type: git
+      url: https://github.com/pleimann/esphome-adafruit-seesaw
+    components:
+      - seesaw
+      - seesaw_keypad
+      - seesaw_neopixel
+
 # Enable logging
 logger:
   level: DEBUG
@@ -49,6 +58,15 @@ psram:
 
 ### Comms Interfaces
 
+# tinyusb:
+#   usb_vendor_id: 0x303A
+#   usb_product_id: 0x4002
+#   usb_manufacturer_str: "CamelPad"
+#   usb_product_str: "CamelPad ESP32-S3"
+
+# usb_cdc_acm:
+#   rx_buffer_size: 1024
+
 spi:
   clk_pin: GPIO2 #SCK
   mosi_pin: GPIO1 #SDO
@@ -58,18 +76,29 @@ i2c:
   scl: GPIO7
   scan: True
 
-i2c_device:
-  id: seesaw
+seesaw:
+  id: seesaw_hub
   address: 0x49
 
-tinyusb:
-  usb_vendor_id: 0x303A
-  usb_product_id: 0x4002
-  usb_manufacturer_str: "CamelPad"
-  usb_product_str: "CamelPad ESP32-S3"
+binary_sensor:
+  - platform: seesaw
+    seesaw_id: seesaw_hub
+    pin: 11
+    name: "Button"
 
-usb_cdc_acm:
-  rx_buffer_size: 1024
+light:
+  - platform: seesaw_neopixel
+    seesaw_id: seesaw_hub
+    pin: 2
+    num_leds: 4
+    name: "NeoPixels"
+
+seesaw_keypad:
+  seesaw_id: seesaw_hub
+  on_key_event:
+    - logger.log:
+        format: "Key %d edge %d"
+        args: [x.key, x.edge]
 
 ### Display Configuration
 
