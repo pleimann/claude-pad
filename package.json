@@ -9,11 +9,10 @@
     "dev": "bun --watch src/index.ts",
     "build": "bun build src/index.ts --outdir dist --target node"
   },
-  "keywords": ["macropad", "hid", "notifications"],
+  "keywords": ["macropad", "serial", "notifications"],
   "license": "MIT",
   "dependencies": {
     "chokidar": "^3.6.0",
-    "node-hid": "^3.1.0",
     "ws": "^8.16.0",
     "yaml": "^2.3.4"
   },

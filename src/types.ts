@@ -2,8 +2,9 @@
 
 export interface Config {
   device: {
-    vendorId: number;
-    productId: number;
+    port?: string;
+    vendorId?: number;
+    productId?: number;
   };
   server: {
     port: number;
@@ -53,9 +54,18 @@ export interface ErrorMessage {
 
 export type OutgoingMessage = ResponseMessage | ErrorMessage;
 
-// HID protocol constants
+// Serial protocol constants (matches firmware config.h)
+export const FRAME_START_BYTE = 0xAA;
+export const MAX_MSG_LEN = 512;
+export const SERIAL_BAUD = 115200;
+
 export const MSG_DISPLAY_TEXT = 0x01;
 export const MSG_BUTTON = 0x02;
+export const MSG_SET_LEDS = 0x03;
+export const MSG_STATUS = 0x04;
+export const MSG_CLEAR = 0x05;
+export const MSG_SET_LABELS = 0x06;
+export const MSG_HEARTBEAT = 0x07;
 
 // Gesture types
 export type GestureType = 'press' | 'doublePress' | 'longPress';

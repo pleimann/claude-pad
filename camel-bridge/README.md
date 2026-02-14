@@ -18,6 +18,7 @@ Bridge Claude Code notifications to the camel-pad device, displaying messages on
 ## Installation
 
 1. Enable the plugin in Claude Code:
+
    ```bash
    claude --plugin-dir /path/to/camel-bridge
    ```
@@ -54,24 +55,25 @@ keys:
 
 ### Configuration Options
 
-| Option | Description |
-|--------|-------------|
-| `endpoint` | WebSocket URL for camel-pad API |
-| `timeout` | Seconds to wait for response (required) |
-| `categories` | Notification categories to forward |
-| `keys` | Key-to-action mappings |
+| Option       | Description                             |
+| ------------ | --------------------------------------- |
+| `endpoint`   | WebSocket URL for camel-pad API         |
+| `timeout`    | Seconds to wait for response (required) |
+| `categories` | Notification categories to forward      |
+| `keys`       | Key-to-action mappings                  |
 
 ## Skills (Commands)
 
 The plugin provides skills that can be invoked as commands or triggered contextually:
 
-| Command | Description |
-|---------|-------------|
+| Command                   | Description                                                                                    |
+| ------------------------- | ---------------------------------------------------------------------------------------------- |
 | `/camel-bridge:configure` | Interactive configuration - select HID device, set endpoint, timeout, categories, key mappings |
-| `/camel-bridge:test` | Test connectivity with camel-pad device |
-| `/camel-bridge:send` | Send a custom message to the camel-pad display |
+| `/camel-bridge:test`      | Test connectivity with camel-pad device                                                        |
+| `/camel-bridge:send`      | Send a custom message to the camel-pad display                                                 |
 
 Skills are also triggered when you ask things like:
+
 - "Configure camel-pad" or "Set up the macropad"
 - "Test camel-pad connection"
 - "Send a message to camel-pad"
@@ -79,13 +81,15 @@ Skills are also triggered when you ask things like:
 ## WebSocket Protocol
 
 Messages sent to camel-pad:
+
 ```json
-{"type": "notification", "id": "uuid", "text": "...", "category": "..."}
+{ "type": "notification", "id": "uuid", "text": "...", "category": "..." }
 ```
 
 Responses from camel-pad:
+
 ```json
-{"type": "response", "id": "uuid", "action": "approve", "label": "Yes"}
+{ "type": "response", "id": "uuid", "action": "approve", "label": "Yes" }
 ```
 
 ## Development

@@ -3,10 +3,7 @@ import { parse } from 'yaml';
 import type { Config } from '../types.js';
 
 const DEFAULT_CONFIG: Config = {
-  device: {
-    vendorId: 0x1234,
-    productId: 0x5678,
-  },
+  device: {},
   server: {
     port: 52914,
     host: 'localhost',
@@ -60,11 +57,11 @@ function mergeConfig(defaults: Config, overrides: Partial<Config>): Config {
 export function validateConfig(config: Config): string[] {
   const errors: string[] = [];
 
-  if (!config.device.vendorId || config.device.vendorId <= 0) {
-    errors.push('device.vendorId must be a positive number');
-  }
-  if (!config.device.productId || config.device.productId <= 0) {
-    errors.push('device.productId must be a positive number');
+  const hasPort = !!config.device.port;
+  const hasIds = config.device.vendorId && config.device.vendorId > 0 &&
+                 config.device.productId && config.device.productId > 0;
+  if (!hasPort && !hasIds) {
+    errors.push('device.port or both device.vendorId and device.productId must be set');
   }
   if (!config.server.port || config.server.port <= 0 || config.server.port > 65535) {
     errors.push('server.port must be between 1 and 65535');

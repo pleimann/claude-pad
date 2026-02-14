@@ -38,6 +38,7 @@ src/
 **Dirty Flag**: Display only redraws when `_dirty=true`.
 
 **State Machine Parsing**: SerialComms uses 5-state machine for frame parsing:
+
 ```
 WAIT_START → READ_LEN_HI → READ_LEN_LO → READ_BODY → READ_CHECKSUM → dispatch
 ```
@@ -49,6 +50,7 @@ WAIT_START → READ_LEN_HI → READ_LEN_LO → READ_BODY → READ_CHECKSUM → d
 The display uses a custom ST7701 initialization via 3-wire SPI bit-bang, then LovyanGFX handles the RGB parallel bus. The init sequence in `display_config.h` was extracted from Waveshare's LVGL example (`../ESP32-S3-LCD-3.16-Demo/Arduino/examples/08_LVGL_V9_Test/lvgl_port.c`).
 
 Display is 320x820 native, rotated 90° to 820x320 landscape. Layout:
+
 - Status bar: 30px top
 - Notification: 220px middle
 - Button labels: 70px bottom (4 zones, 205px each)
@@ -56,11 +58,13 @@ Display is 320x820 native, rotated 90° to 820x320 landscape. Layout:
 ## Serial Protocol
 
 Length-prefixed binary framing over USB CDC ACM:
+
 ```
 [0xAA] [LEN_HI] [LEN_LO] [MSG_TYPE] [PAYLOAD...] [CHECKSUM_XOR]
 ```
 
 Message types defined in `config.h`:
+
 - `0x01` DISPLAY_TEXT: UTF-8 notification text
 - `0x02` BUTTON: `[button_id, pressed]` (device→host)
 - `0x03` SET_LEDS: `[idx, R, G, B]` repeated
@@ -73,11 +77,11 @@ Message types defined in `config.h`:
 
 **Board**: Waveshare ESP32-S3-LCD-3.16 (custom board definition in `boards/`)
 
-| Interface | Pins |
-|-----------|------|
-| ST7701 SPI (init only) | CLK=GPIO2, MOSI=GPIO1, CS=GPIO0 |
-| RGB Parallel (16-bit) | See `display_config.h` for full mapping |
-| I2C (Seesaw) | SDA=GPIO15, SCL=GPIO7, addr=0x49 |
-| Backlight | GPIO6 (PWM, inverted) |
+| Interface              | Pins                                    |
+| ---------------------- | --------------------------------------- |
+| ST7701 SPI (init only) | CLK=GPIO2, MOSI=GPIO1, CS=GPIO0         |
+| RGB Parallel (16-bit)  | See `display_config.h` for full mapping |
+| I2C (Seesaw)           | SDA=GPIO15, SCL=GPIO7, addr=0x49        |
+| Backlight              | GPIO6 (PWM, inverted)                   |
 
 Seesaw pins: Buttons=11-14, NeoPixels=pin 2 (4x WS2812B)

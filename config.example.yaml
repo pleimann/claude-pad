@@ -2,10 +2,12 @@
 # This file configures the macropad middleware
 
 device:
-  # USB HID device identifiers
-  # Use `camel-pad list-devices` to find your device
-  vendorId: 0x1234
-  productId: 0x5678
+  # Serial port path (use `bun run src/index.ts list-devices` to find your device)
+  # Option 1: Explicit port path
+  # port: /dev/tty.usbmodem1234
+  # Option 2: Auto-discover by USB vendor/product ID (used if port is not set)
+  vendorId: 0x303A
+  productId: 0x1001
 
 # Gesture detection timing (in milliseconds)
 gestures:

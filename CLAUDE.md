@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `bun run start` - Run the application
 - `bun run dev` - Run with watch mode (auto-restart on changes)
 - `bun run build` - Build for production
-- `bun run src/index.ts list-devices` - List available HID devices
+- `bun run src/index.ts list-devices` - List available serial devices
 - `bun run src/index.ts config.yaml` - Run with specific config file
 
 ## Architecture
@@ -16,10 +16,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 src/
 ├── index.ts              # Entry point, CLI, wiring
-├── types.ts              # Shared type definitions
-├── hid/
-│   ├── device.ts         # HID connection, read/write, reconnection
-│   └── discovery.ts      # Device enumeration by vendor/product ID
+├── types.ts              # Shared type definitions, protocol constants
+├── serial/
+│   ├── device.ts         # Serial connection, read/write, reconnection
+│   ├── discovery.ts      # Serial port enumeration by vendor/product ID
+│   └── protocol.ts       # Binary frame building/parsing, checksum
 ├── gesture/
 │   ├── types.ts          # Gesture type definitions
 │   └── detector.ts       # Timing-based state machine (press/double/long)
@@ -32,18 +33,18 @@ src/
 
 ## Key Patterns
 
-- Event-driven: HID button events → gesture detector → notification server → response
+- Event-driven: Serial button events → gesture detector → notification server → response
 - Config hot-reload via chokidar file watching
 - Gesture state machine: idle → pressed → (longPress | waitDouble → (press | doublePressed → doublePress))
 - WebSocket notification queue with oldest-first response matching
-- Automatic HID reconnection on disconnect
+- Automatic serial reconnection on disconnect
 
 ## Data Flow
 
 ```
-┌─────────────────┐     HID      ┌─────────────────┐    WebSocket    ┌─────────────────┐
-│   Macropad      │◄────────────►│  camel-pad      │◄───────────────►│  Claude Code    │
-│    (Arduino)    │              │  (TypeScript)   │                 │  Plugin         │
+┌─────────────────┐   Serial     ┌─────────────────┐    WebSocket    ┌─────────────────┐
+│   Macropad FW   │◄────────────►│   camel-pad     │◄───────────────►│  Claude Code    │
+│    (Arduino)    │  (CDC ACM)   │  (TypeScript)   │                 │  Plugin         │
 └─────────────────┘              └─────────────────┘                 └─────────────────┘
      Buttons                          Bridge                          Notifications
      Display                       Gesture detection
@@ -60,6 +61,7 @@ The firmware uses USB CDC ACM (serial) via TinyUSB with length-prefixed binary f
 ```
 
 Message types:
+
 - `0x01` Host→Device: Display text (UTF-8 payload)
 - `0x02` Device→Host: Button event (`[button_id, pressed]`)
 - `0x03` Host→Device: Set LEDs (`[idx, R, G, B]` repeated)
@@ -68,7 +70,7 @@ Message types:
 - `0x06` Host→Device: Set button labels (`[len, label...]` x 4)
 - `0x07` Device→Host: Heartbeat (`[status]`)
 
-Note: The bridge code still uses node-hid. It needs to be updated to use serial communication.
+The bridge uses raw file I/O (`fs.openSync` + `stty`) for serial communication — no native N-API dependencies, compatible with Bun.
 
 ## WebSocket Protocol
 
@@ -98,24 +100,30 @@ The firmware is in `./firmware/`, built with PlatformIO (Arduino framework on ES
 Note: Uses a Python 3.13 venv (`.venv/`) because ESP-IDF doesn't support Python 3.14+.
 
 Key dependencies:
-- **LovyanGFX** — Display driver (RGB parallel panel via `Panel_RGB` + `Bus_RGB`)
+
+- **LVGL v9** — UI framework (software-rotated 820x320 landscape)
+- **ESP-IDF native `esp_lcd`** — RGB panel driver with bounce buffers
 - **Adafruit Seesaw Library** — Button input and NeoPixel control over I2C
 
 ```
 firmware/src/
 ├── main.cpp                    # setup/loop, wiring
 ├── config.h                    # Pin definitions, protocol constants
+├── lv_conf.h                   # LVGL configuration
 ├── display/
-│   ├── display_config.h        # LovyanGFX device class + ST7701 3-wire SPI init
+│   ├── display_config.h        # ST7701 init sequence (from Waveshare examples)
 │   ├── display_manager.h       # Display manager API
-│   └── display_manager.cpp     # UI layout, sprite-based rendering
+│   └── display_manager.cpp     # LVGL-based UI layout and rendering
 ├── seesaw/
 │   ├── seesaw_manager.h        # Seesaw manager API
 │   └── seesaw_manager.cpp      # Button polling, NeoPixel control
-└── comms/
-    ├── protocol.h              # Frame format, checksum
-    ├── serial_comms.h          # Serial communication API
-    └── serial_comms.cpp        # USB CDC message parsing/sending
+├── comms/
+│   ├── protocol.h              # Frame format, checksum
+│   ├── serial_comms.h          # Serial communication API
+│   └── serial_comms.cpp        # USB CDC message parsing/sending
+└── vendor/
+    ├── st7701_bsp/             # ST7701 panel driver (esp_lcd_new_panel_st7701)
+    └── io_additions/           # 3-wire SPI IO for ST7701 init commands
 ```
 
 The hardware device is a `Waveshare ESP32-S3-LCD-3.16`. Documentation: https://www.waveshare.com/wiki/ESP32-S3-LCD-3.16

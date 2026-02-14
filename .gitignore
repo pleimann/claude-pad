@@ -1,7 +1,10 @@
-camel-pad
 .DS_Store
 config.yaml
 node_modules/
 dist/
 bun.lockb
-kicad/
+.venv/
+.vscode/
+.idea/
+*.log
+*.bak

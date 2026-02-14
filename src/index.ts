@@ -1,8 +1,8 @@
 #!/usr/bin/env bun
 
 import { resolve } from 'path';
-import { HIDDevice } from './hid/device.js';
-import { listDevices } from './hid/discovery.js';
+import { SerialDevice } from './serial/device.js';
+import { listPorts } from './serial/discovery.js';
 import { GestureDetector } from './gesture/detector.js';
 import { ConfigWatcher } from './config/watcher.js';
 import { NotificationServer } from './websocket/server.js';
@@ -15,13 +15,12 @@ const command = args[0];
 
 // Handle commands
 if (command === 'list-devices') {
-  console.log('Available HID devices:');
-  const devices = listDevices();
-  for (const device of devices) {
-    const usagePage = device.usagePage !== undefined ? `0x${device.usagePage.toString(16).padStart(4, '0')}` : '----';
-    const usage = device.usage !== undefined ? `0x${device.usage.toString(16).padStart(2, '0')}` : '--';
-    const accessible = device.usagePage && device.usagePage >= 0xFF00 ? ' [accessible]' : '';
-    console.log(`  Vendor: 0x${device.vendorId.toString(16).padStart(4, '0')} Product: 0x${device.productId.toString(16).padStart(4, '0')} UsagePage: ${usagePage} Usage: ${usage} - ${device.product || 'Unknown'}${accessible}`);
+  console.log('Available serial ports:');
+  const ports = await listPorts();
+  for (const port of ports) {
+    const vid = port.vendorId ? `0x${port.vendorId}` : '----';
+    const pid = port.productId ? `0x${port.productId}` : '----';
+    console.log(`  ${port.path}  Vendor: ${vid}  Product: ${pid}  ${port.manufacturer || ''}`);
   }
   process.exit(0);
 }
@@ -43,11 +42,16 @@ if (errors.length > 0) {
 
 console.log('camel-pad starting...');
 console.log(`Config: ${configPath}`);
-console.log(`Device: vendor=0x${config.device.vendorId.toString(16)} product=0x${config.device.productId.toString(16)}`);
+if (config.device.port) {
+  console.log(`Device: port=${config.device.port}`);
+} else {
+  console.log(`Device: vendor=0x${config.device.vendorId?.toString(16)} product=0x${config.device.productId?.toString(16)}`);
+}
 console.log(`Server: ws://${config.server.host}:${config.server.port}`);
 
 // Initialize components
-const hidDevice = new HIDDevice({
+const serialDevice = new SerialDevice({
+  port: config.device.port,
   vendorId: config.device.vendorId,
   productId: config.device.productId,
 });
@@ -61,8 +65,8 @@ const notificationServer = new NotificationServer(config);
 
 // Wire up events
 
-// HID button events → Gesture detector
-hidDevice.on('button', ({ buttonId, pressed }) => {
+// Serial button events → Gesture detector
+serialDevice.on('button', ({ buttonId, pressed }) => {
   gestureDetector.handleButton(buttonId, pressed);
 });
 
@@ -75,10 +79,10 @@ gestureDetector.on('gesture', ({ buttonId, gesture }) => {
   }
 });
 
-// Notification events → HID display
+// Notification events → Serial display
 notificationServer.on('notification', (message: NotificationMessage) => {
   console.log(`Notification: ${message.text}`);
-  hidDevice.sendText(message.text);
+  serialDevice.sendText(message.text);
 });
 
 // Config reload events
@@ -98,7 +102,7 @@ function shutdown(): void {
   console.log('\nShutting down...');
   configWatcher.stop();
   notificationServer.stop();
-  hidDevice.disconnect();
+  serialDevice.disconnect();
   gestureDetector.reset();
   process.exit(0);
 }
@@ -109,6 +113,6 @@ process.on('SIGTERM', shutdown);
 // Start services
 configWatcher.start();
 notificationServer.start();
-hidDevice.connect();
+serialDevice.connect();
 
 console.log('Ready. Press Ctrl+C to exit.');
