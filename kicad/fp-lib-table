@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "camelpad")(type "KiCad")(uri "${KIPRJMOD}/camelpad.pretty")(options "")(descr ""))
+)

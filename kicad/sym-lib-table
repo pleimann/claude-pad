@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "camelpad")(type "KiCad")(uri "${KIPRJMOD}/camelpad.kicad_sym")(options "")(descr ""))
+)
