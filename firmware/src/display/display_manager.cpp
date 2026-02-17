@@ -262,7 +262,7 @@ void DisplayManager::createUI() {
     lv_obj_set_width(_notifLabel, SCREEN_WIDTH - 16);
     lv_obj_set_pos(_notifLabel, 8, 38);
     lv_obj_set_style_text_color(_notifLabel, lv_color_hex(0xffffff), 0);
-    lv_obj_set_style_text_font(_notifLabel, &lv_font_montserrat_16, 0);
+    lv_obj_set_style_text_font(_notifLabel, FONT_NOTIF, 0);
 
     // Button bar (bottom 70px)
     int btnWidth = SCREEN_WIDTH / 4;
