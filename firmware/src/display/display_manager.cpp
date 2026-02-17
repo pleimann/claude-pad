@@ -277,7 +277,7 @@ void DisplayManager::createUI() {
         char label[2] = {(char)('1' + i), '\0'};
         lv_label_set_text(_btnLabels[i], label);
         lv_obj_set_style_text_color(_btnLabels[i], lv_color_hex(0xffffff), 0);
-        lv_obj_set_style_text_font(_btnLabels[i], &lv_font_montserrat_16, 0);
+        lv_obj_set_style_text_font(_btnLabels[i], FONT_BUTTON, 0);
         lv_obj_center(_btnLabels[i]);
     }
 }
