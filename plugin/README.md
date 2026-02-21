@@ -1,4 +1,4 @@
-# camel-bridge
+# camel-pad
 
 Bridge Claude Code notifications to the camel-pad device, displaying messages on the OLED screen and receiving responses via physical key presses.
 
@@ -20,17 +20,17 @@ Bridge Claude Code notifications to the camel-pad device, displaying messages on
 1. Enable the plugin in Claude Code:
 
    ```bash
-   claude --plugin-dir /path/to/camel-bridge
+   claude --plugin-dir /path/to/camel-pad
    ```
 
 2. Configure the plugin:
    ```bash
-   /camel-bridge:configure
+   /camel-pad:configure
    ```
 
 ## Configuration
 
-Settings are stored in `.claude/camel-bridge.local.md` with YAML frontmatter:
+Settings are stored in `.claude/camel-pad.local.md` with YAML frontmatter:
 
 ```yaml
 ---
@@ -66,11 +66,11 @@ keys:
 
 The plugin provides skills that can be invoked as commands or triggered contextually:
 
-| Command                   | Description                                                                                    |
-| ------------------------- | ---------------------------------------------------------------------------------------------- |
-| `/camel-bridge:configure` | Interactive configuration - select HID device, set endpoint, timeout, categories, key mappings |
-| `/camel-bridge:test`      | Test connectivity with camel-pad device                                                        |
-| `/camel-bridge:send`      | Send a custom message to the camel-pad display                                                 |
+| Command                | Description                                                                                    |
+| ---------------------- | ---------------------------------------------------------------------------------------------- |
+| `/camel-pad:configure` | Interactive configuration - select HID device, set endpoint, timeout, categories, key mappings |
+| `/camel-pad:test`      | Test connectivity with camel-pad device                                                        |
+| `/camel-pad:send`      | Send a custom message to the camel-pad display                                                 |
 
 Skills are also triggered when you ask things like:
 

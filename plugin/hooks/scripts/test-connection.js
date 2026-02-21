@@ -10,7 +10,7 @@ const path = require('path');
 const { randomUUID } = require('crypto');
 
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-const configPath = path.join(projectDir, '.claude', 'camel-bridge.local.md');
+const configPath = path.join(projectDir, '.claude', 'camel-pad.local.md');
 
 function parseConfig(configPath) {
   if (!fs.existsSync(configPath)) {
@@ -39,7 +39,7 @@ async function main() {
   if (!config) {
     console.log(JSON.stringify({
       success: false,
-      error: 'No configuration found. Run /camel-bridge:configure first.'
+      error: 'No configuration found. Run /camel-pad:configure first.'
     }));
     process.exit(1);
   }

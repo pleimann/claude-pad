@@ -42,7 +42,7 @@ src/
 ## Data Flow
 
 ```
-┌─────────────────┐   Serial     ┌─────────────────┐    WebSocket    ┌─────────────────┐
+┌─────────────────┐    Serial    ┌─────────────────┐    WebSocket    ┌─────────────────┐
 │   Macropad FW   │◄────────────►│   camel-pad     │◄───────────────►│  Claude Code    │
 │    (Arduino)    │  (CDC ACM)   │  (TypeScript)   │                 │  Plugin         │
 └─────────────────┘              └─────────────────┘                 └─────────────────┘
@@ -130,7 +130,7 @@ The hardware device is a `Waveshare ESP32-S3-LCD-3.16`. Documentation: https://w
 
 Manufacturer examples are in `../ESP32-S3-LCD-3.16-Demo`. The ST7701 init sequence in `display_config.h` was extracted from those examples.
 
-### Pin Mapping
+### Controller Pin Mapping
 
 | Interface            | Pins                    |
 | -------------------- | ----------------------- |
@@ -139,9 +139,9 @@ Manufacturer examples are in `../ESP32-S3-LCD-3.16-Demo`. The ST7701 init sequen
 
 ### Seesaw Pins
 
-- Pin 2: NeoPixels (x4)
-- Pin 11-14: Key01-Key04
+- Pin 0: NeoPixels (x4)
+- Pin 1-4: Key01-Key04
 
 ## Claude Code Plugin
 
-The camel-pad-bridge plugin in ./camel-pad-bridge integrates with Claude Code to forward notifications to the application.
+The camel-pad plugin in ./plugin integrates with Claude Code to forward notifications to the application.

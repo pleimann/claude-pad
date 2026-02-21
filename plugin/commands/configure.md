@@ -11,13 +11,13 @@ Guide the user through setting up the camel-pad bridge configuration.
 There are two configuration files:
 
 - **`config.yaml`** - Device settings for the camel-pad TypeScript bridge process
-- **`.claude/camel-bridge.local.md`** - Plugin settings for the Claude Code integration
+- **`.claude/camel-pad.local.md`** - Plugin settings for the Claude Code integration
 
 ## Instructions
 
 1. Read both configuration files to get current values:
    - Read `config.yaml` for current device settings (vendorId, productId)
-   - Read `.claude/camel-bridge.local.md` for plugin settings if it exists
+   - Read `.claude/camel-pad.local.md` for plugin settings if it exists
 
 2. Use AskUserQuestion to gather configuration:
 
@@ -62,7 +62,7 @@ There are two configuration files:
    - Use the Edit tool to update the device section in config.yaml
    - Update vendorId and productId values (use uppercase hex format like 0x303A)
 
-4. Write plugin settings to `.claude/camel-bridge.local.md`:
+4. Write plugin settings to `.claude/camel-pad.local.md`:
 
 ```markdown
 ---
@@ -85,8 +85,8 @@ keys:
 
 # camel-pad Bridge Plugin Configuration
 
-This file configures the camel-bridge Claude Code plugin.
+This file configures the camel-pad Claude Code plugin.
 Edit the YAML frontmatter above to change settings.
 ```
 
-5. Confirm: "Configuration saved. Run `/camel-bridge:test` to verify connectivity."
+5. Confirm: "Configuration saved. Run `/camel-pad:test` to verify connectivity."

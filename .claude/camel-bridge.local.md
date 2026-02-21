@@ -20,7 +20,7 @@ keys:
 
 # camel-pad Bridge Plugin Configuration
 
-This file configures the camel-bridge Claude Code plugin.
+This file configures the camel-pad Claude Code plugin.
 Edit the YAML frontmatter above to change settings.
 
 ## Settings Reference

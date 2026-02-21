@@ -1,9 +1,14 @@
 {
-  "name": "camel-bridge",
+  "name": "camel-pad",
   "version": "0.1.0",
   "description": "Bridge Claude Code notifications to camel-pad device with OLED display and key-based responses",
   "author": {
     "name": "Mike"
   },
-  "keywords": ["notifications", "hardware", "macropad", "hid"]
+  "keywords": [
+    "notifications",
+    "hardware",
+    "macropad",
+    "hid"
+  ]
 }

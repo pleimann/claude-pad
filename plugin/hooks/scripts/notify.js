@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * WebSocket client for camel-bridge notifications
+ * WebSocket client for camel-pad notifications
  *
  * Reads notification JSON from stdin, sends to camel-pad via WebSocket,
  * waits for response, and outputs result JSON to stdout.
@@ -74,7 +74,7 @@ function parseConfig(configPath) {
 
 async function main(hookInput) {
   const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const configPath = path.join(projectDir, '.claude', 'camel-bridge.local.md');
+  const configPath = path.join(projectDir, '.claude', 'camel-pad.local.md');
 
   const config = parseConfig(configPath);
   if (!config) {

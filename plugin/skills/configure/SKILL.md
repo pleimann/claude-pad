@@ -1,5 +1,5 @@
 ---
-description: Use this skill when the user asks to "configure camel-pad", "set up camel-bridge", "connect to macropad", "select HID device", or needs to configure the camel-pad bridge settings including device selection, endpoint URL, timeout, notification categories, or key mappings.
+description: Use this skill when the user asks to "configure camel-pad", "set up camel-pad", "connect to macropad", "select HID device", or needs to configure the camel-pad bridge settings including device selection, endpoint URL, timeout, notification categories, or key mappings.
 ---
 
 # Configure camel-pad Bridge
@@ -11,13 +11,13 @@ Guide the user through setting up the camel-pad bridge configuration.
 There are two configuration files:
 
 - **`config.yaml`** - Device settings for the camel-pad TypeScript bridge process
-- **`.claude/camel-bridge.local.md`** - Plugin settings for the Claude Code integration
+- **`.claude/camel-pad.local.md`** - Plugin settings for the Claude Code integration
 
 ## Instructions
 
 1. Read both configuration files to get current values:
    - Read `config.yaml` for current device settings (vendorId, productId)
-   - Read `.claude/camel-bridge.local.md` for plugin settings if it exists
+   - Read `.claude/camel-pad.local.md` for plugin settings if it exists
 
 2. Use AskUserQuestion to gather configuration:
 
@@ -71,7 +71,7 @@ There are two configuration files:
      ```
      with the new values
 
-4. Write plugin settings to `.claude/camel-bridge.local.md`:
+4. Write plugin settings to `.claude/camel-pad.local.md`:
 
 ```markdown
 ---
@@ -94,7 +94,7 @@ keys:
 
 # camel-pad Bridge Plugin Configuration
 
-This file configures the camel-bridge Claude Code plugin.
+This file configures the camel-pad Claude Code plugin.
 Edit the YAML frontmatter above to change settings.
 
 ## Settings Reference
@@ -112,6 +112,6 @@ which is read by the camel-pad bridge process.
 
 5. Confirm: "Configuration saved:
    - Device settings → `config.yaml`
-   - Plugin settings → `.claude/camel-bridge.local.md`"
+   - Plugin settings → `.claude/camel-pad.local.md`"
 
-6. Suggest: "Run `/camel-bridge:test` to verify connectivity."
+6. Suggest: "Run `/camel-pad:test` to verify connectivity."
