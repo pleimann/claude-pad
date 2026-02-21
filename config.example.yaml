@@ -18,7 +18,7 @@ gestures:
 # index: 0-based button number on the macropad
 # name: optional human-readable name for logging
 keys:
-  key0: 
+  key0:
     press:
       keys: ["ctrl+c"]
     double_press:
@@ -34,7 +34,7 @@ keys:
     long_press:
       keys: ["end"]
 
-  key1:
+  key2:
     press:
       keys: ["up"]
     double_press:

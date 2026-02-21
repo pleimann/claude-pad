@@ -10,7 +10,7 @@ export interface PortInfo {
 /** List serial port device files that look like USB serial devices. */
 export async function listPorts(): Promise<PortInfo[]> {
   const devFiles = readdirSync('/dev').filter(f =>
-    f.startsWith('tty.usbmodem') || f.startsWith('tty.usbserial') ||
+    f.startsWith('cu.usbmodem') || f.startsWith('cu.usbserial') ||
     f.startsWith('ttyACM') || f.startsWith('ttyUSB')
   ).map(f => `/dev/${f}`);
 
@@ -67,7 +67,7 @@ function getAcmDeviceInfo(): UsbInfo[] {
     for (const block of blocks) {
       const vidMatch = block.match(/"idVendor"\s*=\s*(\d+)/);
       const pidMatch = block.match(/"idProduct"\s*=\s*(\d+)/);
-      const pathMatch = block.match(/"IODialinDevice"\s*=\s*"([^"]+)"/);
+      const pathMatch = block.match(/"IOCalloutDevice"\s*=\s*"([^"]+)"/);
 
       if (pathMatch) {
         results.push({

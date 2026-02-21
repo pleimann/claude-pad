@@ -23,13 +23,15 @@ export interface ButtonEvent {
 
 export class SerialDevice extends EventEmitter {
   private config: SerialDeviceConfig;
-  private fd: number | null = null;
+  private fd: number | null = null;      // Non-blocking, for both reads and writes
   private portPath: string | null = null;
   private parser = new FrameParser();
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private readonly RECONNECT_INTERVAL = 2000;
   private readonly POLL_INTERVAL = 10; // 100Hz polling
+  private readonly WRITE_RETRY_MAX = 50;
+  private readonly WRITE_RETRY_DELAY_MS = 5;
 
   constructor(config: SerialDeviceConfig) {
     super();
@@ -60,7 +62,7 @@ export class SerialDevice extends EventEmitter {
       // Configure serial port with stty
       this.configurePort(portPath);
 
-      // Open the device file for reading and writing
+      // Open non-blocking fd for both reads and writes
       this.fd = openSync(portPath, constants.O_RDWR | constants.O_NOCTTY | constants.O_NONBLOCK);
       this.portPath = portPath;
 
@@ -78,10 +80,15 @@ export class SerialDevice extends EventEmitter {
   }
 
   private configurePort(portPath: string): void {
-    if (process.platform === 'darwin') {
-      execSync(`stty -f ${portPath} ${SERIAL_BAUD} raw -echo -echoctl -echoke -icanon -isig -iexten -opost cs8 -cstopb -parenb`);
-    } else {
-      execSync(`stty -F ${portPath} ${SERIAL_BAUD} raw -echo cs8 -cstopb -parenb`);
+    try {
+      if (process.platform === 'darwin') {
+        execSync(`stty -f "${portPath}" ${SERIAL_BAUD} raw clocal -echo -echoctl -echoke -icanon -isig -iexten -opost cs8 -cstopb -parenb`, { timeout: 5000 });
+      } else {
+        execSync(`stty -F "${portPath}" ${SERIAL_BAUD} raw clocal -echo cs8 -cstopb -parenb`, { timeout: 5000 });
+      }
+    } catch (err: any) {
+      // stty can hang on some USB CDC ports; log but don't fail
+      console.warn(`stty configuration warning: ${err.message}`);
     }
   }
 
@@ -121,6 +128,13 @@ export class SerialDevice extends EventEmitter {
       console.log('Attempting to reconnect...');
       this.connect();
     }, this.RECONNECT_INTERVAL);
+  }
+
+  private sleepMs(ms: number): void {
+    const start = Date.now();
+    while (Date.now() - start < ms) {
+      // Busy-wait for minimal latency
+    }
   }
 
   private handleFrame(frame: ParsedFrame): void {
@@ -181,14 +195,52 @@ export class SerialDevice extends EventEmitter {
   }
 
   private sendMessage(msgType: number, payload?: Buffer): boolean {
-    if (this.fd === null) return false;
+    if (this.fd === null) {
+      console.error('Failed to send: fd is null');
+      return false;
+    }
 
     try {
       const frame = buildFrame(msgType, payload);
-      writeSync(this.fd, frame);
+      let written = 0;
+      let retries = 0;
+
+      // Handle non-blocking writes with retry on EAGAIN
+      while (written < frame.length && retries < this.WRITE_RETRY_MAX) {
+        try {
+          const bytesWritten = writeSync(this.fd, frame, written);
+          if (bytesWritten === 0 && written < frame.length) {
+            // No bytes written but no error; delay and retry
+            retries++;
+            this.sleepMs(this.WRITE_RETRY_DELAY_MS);
+          } else {
+            written += bytesWritten;
+            retries = 0; // Reset retries on successful write
+          }
+        } catch (err: any) {
+          if (err.code === 'EAGAIN' || err.code === 'EWOULDBLOCK') {
+            retries++;
+            if (retries >= this.WRITE_RETRY_MAX) {
+              console.error(`Write timeout after ${retries} retries`);
+              return false;
+            }
+            // Delay before retry to allow kernel buffer to drain
+            this.sleepMs(this.WRITE_RETRY_DELAY_MS);
+          } else {
+            console.error(`Write error: ${err.code || err.message}`, err);
+            throw err;
+          }
+        }
+      }
+
+      if (written !== frame.length) {
+        console.error(`Partial write: ${written}/${frame.length} bytes`);
+        return false;
+      }
+
       return true;
-    } catch (err) {
-      console.error('Failed to send:', err);
+    } catch (err: any) {
+      console.error('Failed to send:', err.message || err);
       return false;
     }
   }
@@ -202,12 +254,10 @@ export class SerialDevice extends EventEmitter {
     this.stopPolling();
 
     if (this.fd !== null) {
-      try {
-        closeSync(this.fd);
-      } catch {
-        // Ignore close errors
-      }
+      try { closeSync(this.fd); } catch { /* ignore */ }
       this.fd = null;
+    }
+    if (this.portPath !== null) {
       this.portPath = null;
       this.parser.reset();
       this.emit('disconnected');

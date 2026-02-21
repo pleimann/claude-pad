@@ -229,8 +229,10 @@ void DisplayManager::initLVGL() {
     ESP_ERROR_CHECK(esp_timer_create(&tick_args, &tick_timer));
     ESP_ERROR_CHECK(esp_timer_start_periodic(tick_timer, LVGL_TICK_PERIOD_MS * 1000));
 
-    // LVGL task on core 1
-    xTaskCreatePinnedToCore(lvgl_task, "LVGL", LVGL_TASK_STACK_SIZE, NULL, LVGL_TASK_PRIORITY, NULL, 1);
+    // LVGL task on core 0 — Arduino loop runs on core 1 (ARDUINO_RUNNING_CORE=1),
+    // so keeping LVGL on a separate core eliminates task contention over the CPU
+    // and prevents LVGL (priority 5) from starving Serial/comms processing.
+    xTaskCreatePinnedToCore(lvgl_task, "LVGL", LVGL_TASK_STACK_SIZE, NULL, LVGL_TASK_PRIORITY, NULL, 0);
 
     Serial.println("[display] LVGL initialized (820x320 landscape)");
 }

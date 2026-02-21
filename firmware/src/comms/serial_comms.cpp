@@ -8,8 +8,14 @@ void SerialComms::begin() {
 }
 
 void SerialComms::poll() {
+    // Reset state machine if timeout waiting for frame completion (prevents state machine from getting stuck)
+    if (_state != WAIT_START && (millis() - _lastByteTime) > FRAME_TIMEOUT_MS) {
+        _state = WAIT_START;
+    }
+
     while (Serial.available()) {
         uint8_t byte = Serial.read();
+        _lastByteTime = millis();  // Track when we received data
 
         switch (_state) {
         case WAIT_START:

@@ -7,7 +7,8 @@
   "scripts": {
     "start": "bun run src/index.ts",
     "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node"
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "harness": "bun run src/harness/index.ts"
   },
   "keywords": ["macropad", "serial", "notifications"],
   "license": "MIT",

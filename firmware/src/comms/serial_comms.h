@@ -40,6 +40,8 @@ private:
     uint8_t    _buffer[MAX_MSG_LEN];
     uint16_t   _bodyLen = 0;
     uint16_t   _bodyIdx = 0;
+    unsigned long _lastByteTime = 0;  // Timeout tracking
+    static const unsigned long FRAME_TIMEOUT_MS = 500;  // Reset if no complete frame in 500ms
 
     bool           _bridgeConnected = false;
     TextCallback   _onDisplayText = nullptr;
