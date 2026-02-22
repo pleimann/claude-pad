@@ -6,8 +6,8 @@ import { homedir } from 'os';
 
 // Asset-embed the Go tray binaries. At compile time (bun build --compile),
 // these become embedded $bunfs/ paths. At dev time, they resolve to real files.
-import trayBinDarwin from '@assets/traybin/tray_darwin_release' with { type: 'file' };
-import trayBinWindows from '@assets/traybin/tray_windows_release.exe' with { type: 'file' };
+import trayBinDarwin from '@/static/traybin/tray_darwin_release' with { type: 'file' };
+import trayBinWindows from '@/static/traybin/tray_windows_release.exe' with { type: 'file' };
 
 export interface MenuItem {
   title: string;

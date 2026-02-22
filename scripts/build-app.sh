@@ -55,7 +55,7 @@ cat > "${APP_DIR}/Contents/Info.plist" << PLIST
   <key>CFBundleName</key>
   <string>${APP_NAME}</string>
   <key>CFBundleDisplayName</key>
-  <string>camel-pad</string>
+  <string>CamelPad</string>
   <key>CFBundleVersion</key>
   <string>${VERSION}</string>
   <key>CFBundleShortVersionString</key>
@@ -63,7 +63,9 @@ cat > "${APP_DIR}/Contents/Info.plist" << PLIST
   <key>CFBundleExecutable</key>
   <string>${APP_NAME}</string>
   <key>CFBundleIconFile</key>
-  <string>AppIcon</string>
+  <string>CamelPad</string>
+  <key>CFBundleIconName</key>
+  <string>CamelPad</string>
   <key>CFBundlePackageType</key>
   <string>APPL</string>
   <key>LSUIElement</key>
@@ -73,18 +75,46 @@ cat > "${APP_DIR}/Contents/Info.plist" << PLIST
   <key>NSHighResolutionCapable</key>
   <true/>
   <key>NSHumanReadableCopyright</key>
-  <string>Copyright © 2025 camel-pad contributors. MIT License.</string>
+  <string>Copyright © 2026 Michael R Pleimann. MIT License.</string>
 </dict>
 </plist>
 PLIST
 
-# 6. Copy app icon if it exists
-if [ -f "assets/AppIcon.icns" ]; then
-  cp assets/AppIcon.icns "${APP_DIR}/Contents/Resources/AppIcon.icns"
-  echo "  Copied AppIcon.icns"
+# 6. Build icon assets
+if [ -d "assets/CamelPad.icon" ]; then
+  # 6a. Compile Assets.car for macOS 26 Tahoe Liquid Glass rendering
+  if xcrun --find actool &>/dev/null; then
+    echo "  Compiling Assets.car (Liquid Glass)..."
+    ACTOOL=$(xcrun -f actool)
+    ACTOOL_PLIST=$(mktemp /tmp/actool_info.XXXXXX.plist)
+    "$ACTOOL" "assets/CamelPad.icon" \
+      --compile "${APP_DIR}/Contents/Resources" \
+      --output-format human-readable-text \
+      --notices --warnings --errors \
+      --output-partial-info-plist "$ACTOOL_PLIST" \
+      --app-icon CamelPad \
+      --include-all-app-icons \
+      --enable-on-demand-resources NO \
+      --development-region en \
+      --target-device mac \
+      --minimum-deployment-target 26.0 \
+      --platform macosx
+    rm -f "$ACTOOL_PLIST"
+    echo "  Compiled Assets.car"
+  else
+    echo "  Warning: actool not found (Xcode required). Skipping Assets.car."
+  fi
+
+  # 6b. Generate legacy .icns for macOS 13–15
+  echo "  Generating legacy CamelPad.icns..."
+  swift scripts/export-icon.swift
+fi
+
+if [ -f "assets/CamelPad.icns" ]; then
+  cp assets/CamelPad.icns "${APP_DIR}/Contents/Resources/CamelPad.icns"
+  echo "  Copied CamelPad.icns"
 else
-  echo "  Note: No assets/AppIcon.icns found. App will use default icon."
-  echo "        Create one with: iconutil -c icns assets/AppIcon.iconset"
+  echo "  Note: No assets/CamelPad.icns found. App will use default icon on macOS 13–15."
 fi
 
 echo ""

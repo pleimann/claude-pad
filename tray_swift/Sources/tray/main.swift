@@ -129,7 +129,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let clean = title
             .replacingOccurrences(of: "● ", with: "")
             .replacingOccurrences(of: "○ ", with: "")
-        statusItem.button?.toolTip = "camel-pad · \(clean)"
+        statusItem.button?.toolTip = "Camel Pad · \(clean)"
     }
 
     // ─── Tray button click ─────────────────────────────────────────────────────
@@ -156,7 +156,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func showQuitMenu(_ button: NSStatusBarButton) {
         let menu = NSMenu()
         let item = NSMenuItem(
-            title: "Quit camel-pad",
+            title: "Quit Camel Pad",
             action: #selector(handleQuit(_:)),
             keyEquivalent: ""
         )

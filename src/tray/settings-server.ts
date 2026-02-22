@@ -1,11 +1,11 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { stringify } from 'yaml';
-import { loadConfig } from '../config/loader.js';
-import { listPorts } from '../serial/discovery.js';
-import type { Config } from '../types.js';
+import { loadConfig } from '@/config/loader.js';
+import { listPorts } from '@/serial/discovery.js';
+import type { Config } from '@/types.js';
 
 // Embed the settings HTML as a Bun asset (works in dev mode and after bun --compile)
-import settingsHtmlPath from '../../assets/settings.html' with { type: 'file' };
+import settingsHtmlPath from '@/static/settings.html' with { type: 'file' };
 
 export interface SettingsServerHandle {
   port: number;
@@ -92,6 +92,10 @@ export async function startSettingsServer(
   });
 
   resetIdleTimer();
+
+  if (!server || !server.port) {
+    throw new Error('Failed to start settings server');
+  }
 
   const url = `http://localhost:${server.port}`;
   console.log('Settings server:', url);

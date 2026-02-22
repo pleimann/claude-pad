@@ -10,7 +10,7 @@ import { startSettingsServer } from '@/tray/settings-server.js';
 import type { BridgeHandle } from '@/bridge.js';
 
 // Embed icon as a Bun asset
-import iconPath from '@assets/icon.png' with { type: 'file' };
+import iconPath from '@/static/tray-icon.png' with { type: 'file' };
 
 const configPath = getTrayConfigPath();
 
