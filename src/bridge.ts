@@ -22,6 +22,10 @@ export interface BridgeHandle {
   sendLabels(labels: string[]): boolean;
 }
 
+function remapButtonIndex(i: number, h: 'left' | 'right'): number {
+  return h === 'right' ? 3 - i : i;
+}
+
 export async function startBridge(configPath: string): Promise<BridgeHandle> {
   const configWatcher = new ConfigWatcher(configPath);
   const config = configWatcher.getConfig();
@@ -48,6 +52,7 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
   let connected = false;
   let portPath: string | null = null;
   let pingInterval: ReturnType<typeof setInterval> | null = null;
+  let handedness = config.handedness;
 
   function emitStatus() {
     const status: BridgeStatus = {
@@ -58,9 +63,11 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
     for (const cb of statusListeners) cb(status);
   }
 
-  // Serial button events → Gesture detector
+  // Serial button events → Gesture detector (with handedness remapping)
   serialDevice.on('button', ({ buttonId, pressed }) => {
-    gestureDetector.handleButton(buttonId, pressed);
+    const num = parseInt(buttonId.replace('key', ''));
+    const remapped = `key${remapButtonIndex(num, handedness)}`;
+    gestureDetector.handleButton(remapped, pressed);
   });
 
   serialDevice.on('connected', () => {
@@ -96,6 +103,7 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
   // Config reload events
   configWatcher.on('reload', (newConfig) => {
     console.log('Applying new configuration...');
+    handedness = newConfig.handedness;
     gestureDetector.updateConfig({
       longPressMs: newConfig.gestures.longPressMs,
       doublePressMs: newConfig.gestures.doublePressMs,
@@ -132,10 +140,12 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
       return serialDevice.clearDisplay();
     },
     sendLeds(leds: Array<{ index: number; r: number; g: number; b: number }>): boolean {
-      return serialDevice.sendLeds(leds);
+      const remapped = leds.map(led => ({ ...led, index: remapButtonIndex(led.index, handedness) }));
+      return serialDevice.sendLeds(remapped);
     },
     sendLabels(labels: string[]): boolean {
-      return serialDevice.sendLabels(labels);
+      const reordered = handedness === 'right' ? [...labels].reverse() : labels;
+      return serialDevice.sendLabels(reordered);
     },
   };
 }

@@ -9,6 +9,11 @@ device:
   vendorId: 0x303A
   productId: 0x1001
 
+# Button orientation: right (default) or left
+# right: key0 = leftmost button (physical buttons are numbered right-to-left)
+# left:  key0 = rightmost button (natural firmware order)
+handedness: right
+
 # Gesture detection timing (in milliseconds)
 gestures:
   longPressMs: 500 # Hold time for long-press

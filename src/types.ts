@@ -18,6 +18,7 @@ export interface Config {
   defaults: {
     timeoutMs: number;
   };
+  handedness: 'left' | 'right';
 }
 
 export interface KeyMapping {

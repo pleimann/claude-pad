@@ -698,6 +698,20 @@
       </div>
 
       <div class="section">
+        <h2>Orientation</h2>
+        <div class="device-mode">
+          <label
+            ><input type="radio" name="handedness" value="right" checked />
+            Right-handed</label
+          >
+          <label
+            ><input type="radio" name="handedness" value="left" />
+            Left-handed</label
+          >
+        </div>
+      </div>
+
+      <div class="section">
         <h2>Gestures</h2>
         <div class="field">
           <label>Long Press</label>
@@ -846,6 +860,11 @@
             : "";
         }
 
+        const handedness = config.handedness ?? "right";
+        document.querySelector(
+          `input[name="handedness"][value="${handedness}"]`,
+        ).checked = true;
+
         document.getElementById("longPressMs").value =
           config.gestures?.longPressMs ?? 500;
         document.getElementById("doublePressMs").value =
@@ -905,6 +924,7 @@
             timeoutMs: parseInt(document.getElementById("timeoutMs").value),
           },
           keys: currentConfig?.keys ?? {},
+          handedness: document.querySelector('input[name="handedness"]:checked').value,
         };
 
         if (mode === "port") {

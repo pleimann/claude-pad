@@ -164,6 +164,8 @@ function buildYaml(config: Partial<Config>): string {
     if (config.device.productId) out.device.productId = `0x${config.device.productId.toString(16)}`;
   }
 
+  if (config.handedness) out.handedness = config.handedness;
+
   if (config.server) {
     out.server = {
       port: config.server.port,

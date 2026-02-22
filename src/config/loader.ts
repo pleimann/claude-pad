@@ -16,6 +16,7 @@ const DEFAULT_CONFIG: Config = {
   defaults: {
     timeoutMs: 30000,
   },
+  handedness: 'right',
 };
 
 export function loadConfig(path: string): Config {
@@ -51,6 +52,7 @@ function mergeConfig(defaults: Config, overrides: Partial<Config>): Config {
       ...defaults.defaults,
       ...overrides.defaults,
     },
+    handedness: overrides.handedness ?? defaults.handedness,
   };
 }
 
