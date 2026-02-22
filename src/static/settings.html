@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Camel Pad Settings</title>
+    <title>Camel Pad</title>
     <style>
       *,
       *::before,
@@ -18,20 +18,60 @@
         font-size: 13px;
         background: #f5f5f7;
         color: #1d1d1f;
-        padding: 24px;
+        padding: 20px 24px 24px;
         min-width: 480px;
         max-width: 600px;
         margin: 0 auto;
       }
 
-      h1 {
-        font-size: 22px;
-        font-weight: 600;
+      /* ── Tab bar ── */
+      .tab-bar {
+        display: flex;
+        justify-content: center;
         margin-bottom: 20px;
-        color: #1d1d1f;
       }
 
-      .section {
+      .tab-seg {
+        display: flex;
+        background: #e0e0e5;
+        border-radius: 8px;
+        padding: 2px;
+        gap: 2px;
+      }
+
+      .tab-btn {
+        padding: 5px 20px;
+        border: none;
+        border-radius: 6px;
+        background: transparent;
+        font-size: 13px;
+        font-family: inherit;
+        font-weight: 500;
+        color: #6e6e73;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        white-space: nowrap;
+      }
+
+      .tab-btn.active {
+        background: #fff;
+        color: #1d1d1f;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      }
+
+      /* ── Views ── */
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
+
+      /* ── Shared card ── */
+      .section,
+      .ctrl-section {
         background: #fff;
         border-radius: 10px;
         padding: 16px;
@@ -39,7 +79,8 @@
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       }
 
-      .section h2 {
+      .section h2,
+      .ctrl-section h2 {
         font-size: 13px;
         font-weight: 600;
         text-transform: uppercase;
@@ -48,6 +89,7 @@
         margin-bottom: 12px;
       }
 
+      /* ── Settings: fields ── */
       .field {
         display: flex;
         align-items: center;
@@ -56,7 +98,7 @@
       }
 
       .field:not(:last-child) {
-        border-bottom: 1px solid #f0f0f2;
+        /* border-bottom: 1px solid #f0f0f2; */
       }
 
       .field label {
@@ -99,6 +141,7 @@
         flex: 1;
       }
 
+      /* ── Buttons ── */
       .btn {
         display: inline-flex;
         align-items: center;
@@ -112,6 +155,8 @@
         font-family: inherit;
         font-weight: 500;
         transition: opacity 0.15s;
+        white-space: nowrap;
+        flex-shrink: 0;
       }
 
       .btn:hover {
@@ -125,18 +170,17 @@
         background: #0071e3;
         color: #fff;
       }
-
       .btn-secondary {
         background: #e8e8ed;
         color: #1d1d1f;
       }
-
       .btn-small {
         height: 24px;
         padding: 0 10px;
         font-size: 12px;
       }
 
+      /* ── Settings: footer ── */
       .footer {
         display: flex;
         justify-content: flex-end;
@@ -144,6 +188,7 @@
         margin-top: 8px;
       }
 
+      /* ── Settings: device mode ── */
       .device-mode {
         display: flex;
         gap: 16px;
@@ -200,120 +245,557 @@
         color: #8b1a1a;
         display: block;
       }
+
+      /* ── Control: connection banner ── */
+      .conn-banner {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border-radius: 10px;
+        padding: 10px 14px;
+        margin-bottom: 16px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        font-size: 13px;
+        color: #6e6e73;
+      }
+
+      .conn-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c7c7cc;
+        flex-shrink: 0;
+      }
+      .conn-dot.connected {
+        background: #30d158;
+      }
+      .conn-dot.disconnected {
+        background: #c7c7cc;
+      }
+
+      /* ── Control: generic field row ──
+         A horizontal flex row with gap; dividers between rows.
+         No fixed label column — labels are inline where needed.       */
+      .ctrl-field {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 7px 0;
+      }
+
+      .ctrl-field:not(:last-child) {
+        /* border-bottom: 1px solid #f0f0f2; */
+      }
+
+      /* Text inputs inside ctrl-field grow to fill space */
+      .ctrl-field input[type="text"] {
+        flex: 1;
+        min-width: 0;
+        height: 28px;
+        border: 1px solid #d2d2d7;
+        border-radius: 6px;
+        padding: 0 8px;
+        font-size: 13px;
+        font-family: inherit;
+        background: #fff;
+        color: #1d1d1f;
+        outline: none;
+      }
+
+      .ctrl-field input[type="text"]:focus {
+        border-color: #0071e3;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+      }
+
+      .ctrl-field textarea {
+        flex: 1;
+        min-width: 0;
+        height: 52px;
+        border: 1px solid #d2d2d7;
+        border-radius: 6px;
+        padding: 6px 8px;
+        font-size: 13px;
+        font-family: inherit;
+        background: #fff;
+        color: #1d1d1f;
+        outline: none;
+        resize: vertical;
+      }
+
+      .ctrl-field textarea:focus {
+        border-color: #0071e3;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+      }
+
+      /* Short descriptive label within a row ("Status", "Category") */
+      .ctrl-dim {
+        font-size: 12px;
+        color: #6e6e73;
+        white-space: nowrap;
+        flex-shrink: 0;
+      }
+
+      /* Inline ok/error feedback that appears after an action */
+      .ctrl-fb {
+        font-size: 11px;
+        min-width: 0;
+        white-space: nowrap;
+        color: transparent; /* invisible when empty */
+        flex-shrink: 0;
+      }
+      .ctrl-fb.ok {
+        color: #1a5c2a;
+      }
+      .ctrl-fb.err {
+        color: #8b1a1a;
+      }
+
+      /* ── Control: sub-section heading ──
+         Used within a card to label a group of controls (e.g. "Labels").  */
+      .ctrl-sub-h {
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6e6e73;
+        padding: 10px 0 4px;
+      }
+
+      .ctrl-sub-h:first-child {
+        padding-top: 0;
+      }
+
+      .ctrl-sub-sep {
+        border: none;
+        border-top: 1px solid #f0f0f2;
+        margin: 4px 0 0;
+      }
+
+      /* ── Control: 4-up label inputs ── */
+      .label-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .label-grid input[type="text"] {
+        width: 100%;
+        height: 28px;
+        border: 1px solid #d2d2d7;
+        border-radius: 6px;
+        padding: 0 6px;
+        font-size: 12px;
+        font-family: inherit;
+        background: #fff;
+        color: #1d1d1f;
+        outline: none;
+        min-width: 0;
+      }
+
+      .label-grid input[type="text"]:focus {
+        border-color: #0071e3;
+        box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+      }
+
+      /* ── Control: 4-up LED pickers ── */
+      .led-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .led-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 11px;
+        color: #6e6e73;
+      }
+
+      .led-item input[type="color"] {
+        width: 100%;
+        height: 28px;
+        border: 1px solid #d2d2d7;
+        border-radius: 6px;
+        padding: 2px;
+        cursor: pointer;
+        background: #fff;
+      }
+
+      /* ── Control: notification result ── */
+      .notify-result {
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 6px;
+        background: #f5f5f7;
+        color: #6e6e73;
+        margin-top: 8px;
+        display: none;
+      }
+      .notify-result.visible {
+        display: block;
+      }
+      .notify-result.ok {
+        background: #d4f4dd;
+        color: #1a5c2a;
+      }
+      .notify-result.err {
+        background: #fde8e8;
+        color: #8b1a1a;
+      }
     </style>
   </head>
   <body>
-    <h1>Camel Pad Settings</h1>
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <div class="tab-seg">
+        <button class="tab-btn active" onclick="switchTab('control')">
+          Control
+        </button>
+        <button class="tab-btn" onclick="switchTab('settings')">
+          Settings
+        </button>
+      </div>
+    </div>
 
-    <div class="section">
-      <h2>Device</h2>
-
-      <div class="device-mode">
-        <label
-          ><input type="radio" name="deviceMode" value="port" checked /> Serial
-          Port</label
-        >
-        <label
-          ><input type="radio" name="deviceMode" value="ids" /> Vendor/Product
-          ID</label
-        >
+    <!-- ═══════════════════════════════════════════════════════════════
+         CONTROL VIEW
+         Layout math at 480px min-width:
+           body padding: 24px × 2 → inner = 432px
+           section padding: 16px × 2 → content = 400px
+         ═══════════════════════════════════════════════════════════════ -->
+    <div id="view-control" class="view active">
+      <!-- Connection status -->
+      <div class="conn-banner">
+        <span class="conn-dot disconnected" id="conn-dot"></span>
+        <span id="conn-label">Checking…</span>
       </div>
 
-      <div id="port-section" class="active">
-        <div class="field">
-          <label>Serial Port</label>
-          <div class="row">
-            <input type="text" id="port" placeholder="/dev/cu.usbmodem..." />
+      <!-- Display controls
+           Row 1: [textarea flex] [Send ~52px]
+           Row 2: [Status ~44px] [input flex] [Send ~52px] [fb auto]
+           Row 3: [Clear Display ~100px] [fb auto]          -->
+      <div class="ctrl-section">
+        <h2>Display</h2>
+
+        <div class="ctrl-field">
+          <textarea
+            id="ctrl-text"
+            placeholder="Text to show on display…"
+          ></textarea>
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+            "
+          >
             <button
               type="button"
               class="btn btn-secondary btn-small"
-              id="scan-btn"
-              onclick="scanDevices()"
+              onclick="sendDisplayText()"
             >
-              Scan
+              Send
             </button>
+            <span class="ctrl-fb" id="fb-text"></span>
           </div>
         </div>
-        <div id="scan-results">
-          <select
-            id="port-select"
-            onchange="document.getElementById('port').value = this.value"
+
+        <div class="ctrl-field">
+          <input type="text" id="ctrl-status" placeholder="Status bar text…" />
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+            "
           >
-            <option value="">Select a device...</option>
-          </select>
+            <button
+              type="button"
+              class="btn btn-secondary btn-small"
+              onclick="sendStatusText()"
+            >
+              Send
+            </button>
+            <span class="ctrl-fb" id="fb-status"></span>
+          </div>
+        </div>
+
+        <div class="ctrl-field">
+          <button
+            type="button"
+            class="btn btn-secondary btn-small"
+            onclick="clearDisplay()"
+          >
+            Clear Display
+          </button>
+          <span class="ctrl-fb" id="fb-clear"></span>
         </div>
       </div>
 
-      <div id="id-section">
+      <!-- Button controls
+           Labels row: [label-grid flex (4-col grid)] [Apply ~52px] [fb auto]
+             label-grid = 400 - 52 - 8gap - 8gap - fb ≈ each col ~80px ✓
+           LED row: [led-grid flex (4-col grid)] [fb auto]           -->
+      <div class="ctrl-section">
+        <h2>Buttons</h2>
+
+        <p class="ctrl-sub-h">Labels</p>
+        <div class="ctrl-field">
+          <div class="label-grid">
+            <input type="text" id="lbl0" placeholder="Key 1" maxlength="12" />
+            <input type="text" id="lbl1" placeholder="Key 2" maxlength="12" />
+            <input type="text" id="lbl2" placeholder="Key 3" maxlength="12" />
+            <input type="text" id="lbl3" placeholder="Key 4" maxlength="12" />
+          </div>
+          <button
+            type="button"
+            class="btn btn-secondary btn-small"
+            onclick="sendLabels()"
+          >
+            Apply
+          </button>
+          <span class="ctrl-fb" id="fb-labels"></span>
+        </div>
+
+        <p class="ctrl-sub-h">LED Colors</p>
+        <div class="ctrl-field">
+          <div class="led-grid">
+            <div class="led-item">
+              <input
+                type="color"
+                id="led0"
+                value="#000000"
+                oninput="sendLeds()"
+              /><span>Key 1</span>
+            </div>
+            <div class="led-item">
+              <input
+                type="color"
+                id="led1"
+                value="#000000"
+                oninput="sendLeds()"
+              /><span>Key 2</span>
+            </div>
+            <div class="led-item">
+              <input
+                type="color"
+                id="led2"
+                value="#000000"
+                oninput="sendLeds()"
+              /><span>Key 3</span>
+            </div>
+            <div class="led-item">
+              <input
+                type="color"
+                id="led3"
+                value="#000000"
+                oninput="sendLeds()"
+              /><span>Key 4</span>
+            </div>
+          </div>
+          <span class="ctrl-fb" id="fb-leds"></span>
+        </div>
+      </div>
+
+      <!-- Notification tester
+           Row 1: [text input flex] [Send ~52px]   → trivially fits
+           Row 2: [Category ~58px] [category input flex]
+           Result box: full width, shown on response              -->
+      <!-- <div class="ctrl-section">
+        <h2>Notifications</h2>
+
+        <div class="ctrl-field">
+          <input
+            type="text"
+            id="notify-text"
+            placeholder="Notification text…"
+          />
+          <button
+            type="button"
+            class="btn btn-secondary btn-small"
+            onclick="sendNotify()"
+          >
+            Send
+          </button>
+        </div>
+
+        <div class="ctrl-field">
+          <input
+            type="text"
+            id="notify-category"
+            placeholder="Category (optional)..."
+          />
+        </div>
+
+        <div class="notify-result" id="notify-result"></div>
+      </div> -->
+    </div>
+    <!-- /view-control -->
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         SETTINGS VIEW
+         ═══════════════════════════════════════════════════════════════ -->
+    <div id="view-settings" class="view">
+      <div class="section">
+        <h2>Device</h2>
+
+        <div class="device-mode">
+          <label
+            ><input type="radio" name="deviceMode" value="port" checked />
+            Serial Port</label
+          >
+          <label
+            ><input type="radio" name="deviceMode" value="ids" /> Vendor/Product
+            ID</label
+          >
+        </div>
+
+        <div id="port-section" class="active">
+          <div class="field">
+            <label>Serial Port</label>
+            <div class="row">
+              <input type="text" id="port" placeholder="/dev/cu.usbmodem..." />
+              <button
+                type="button"
+                class="btn btn-secondary btn-small"
+                id="scan-btn"
+                onclick="scanDevices()"
+              >
+                Scan
+              </button>
+            </div>
+          </div>
+          <div id="scan-results">
+            <select
+              id="port-select"
+              onchange="document.getElementById('port').value = this.value"
+            >
+              <option value="">Select a device...</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="id-section">
+          <div class="field">
+            <label>Vendor ID</label>
+            <input type="text" id="vendorId" placeholder="0x303A" />
+            <span class="hint">hex</span>
+          </div>
+          <div class="field">
+            <label>Product ID</label>
+            <input type="text" id="productId" placeholder="0x1001" />
+            <span class="hint">hex</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Gestures</h2>
         <div class="field">
-          <label>Vendor ID</label>
-          <input type="text" id="vendorId" placeholder="0x303A" />
-          <span class="hint">hex</span>
+          <label>Long Press</label>
+          <input
+            type="number"
+            id="longPressMs"
+            min="100"
+            max="5000"
+            step="50"
+          />
+          <span class="hint">ms</span>
         </div>
         <div class="field">
-          <label>Product ID</label>
-          <input type="text" id="productId" placeholder="0x1001" />
-          <span class="hint">hex</span>
+          <label>Double Press Window</label>
+          <input
+            type="number"
+            id="doublePressMs"
+            min="50"
+            max="2000"
+            step="50"
+          />
+          <span class="hint">ms</span>
         </div>
       </div>
-    </div>
 
-    <div class="section">
-      <h2>Gestures</h2>
-      <div class="field">
-        <label>Long Press</label>
-        <input type="number" id="longPressMs" min="100" max="5000" step="50" />
-        <span class="hint">ms</span>
+      <div class="section">
+        <h2>Server</h2>
+        <div class="field">
+          <label>WebSocket Port</label>
+          <input type="number" id="serverPort" min="1024" max="65535" />
+        </div>
+        <div class="field">
+          <label>Host</label>
+          <input type="text" id="serverHost" placeholder="localhost" />
+        </div>
       </div>
-      <div class="field">
-        <label>Double Press Window</label>
-        <input type="number" id="doublePressMs" min="50" max="2000" step="50" />
-        <span class="hint">ms</span>
+
+      <div class="section">
+        <h2>Notification Timeout</h2>
+        <div class="field">
+          <label>Timeout</label>
+          <input
+            type="number"
+            id="timeoutMs"
+            min="1000"
+            max="300000"
+            step="1000"
+          />
+          <span class="hint">ms</span>
+        </div>
+      </div>
+
+      <div id="status-msg" class="status-msg"></div>
+
+      <div class="footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          onclick="window.close()"
+        >
+          Cancel
+        </button>
+        <button type="button" class="btn btn-primary" onclick="saveConfig()">
+          Save
+        </button>
       </div>
     </div>
-
-    <div class="section">
-      <h2>Server</h2>
-      <div class="field">
-        <label>WebSocket Port</label>
-        <input type="number" id="serverPort" min="1024" max="65535" />
-      </div>
-      <div class="field">
-        <label>Host</label>
-        <input type="text" id="serverHost" placeholder="localhost" />
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>Notification Timeout</h2>
-      <div class="field">
-        <label>Timeout</label>
-        <input
-          type="number"
-          id="timeoutMs"
-          min="1000"
-          max="300000"
-          step="1000"
-        />
-        <span class="hint">ms</span>
-      </div>
-    </div>
-
-    <div id="status-msg" class="status-msg"></div>
-
-    <div class="footer">
-      <button type="button" class="btn btn-secondary" onclick="window.close()">
-        Cancel
-      </button>
-      <button type="button" class="btn btn-primary" onclick="saveConfig()">
-        Save
-      </button>
-    </div>
+    <!-- /view-settings -->
 
     <script>
       let currentConfig = null;
+      let statusPollInterval = null;
 
-      // Device mode toggle
+      // ── Tab switching ────────────────────────────────────────────────
+
+      function switchTab(tab) {
+        document.querySelectorAll(".tab-btn").forEach((b, i) => {
+          b.classList.toggle("active", (i === 0) === (tab === "control"));
+        });
+        document
+          .getElementById("view-settings")
+          .classList.toggle("active", tab === "settings");
+        document
+          .getElementById("view-control")
+          .classList.toggle("active", tab === "control");
+
+        if (tab === "control") {
+          if (!statusPollInterval) {
+            updateConnectionStatus();
+            statusPollInterval = setInterval(updateConnectionStatus, 3000);
+          }
+        } else {
+          clearInterval(statusPollInterval);
+          statusPollInterval = null;
+        }
+      }
+
+      // ── Settings view ────────────────────────────────────────────────
+
       document.querySelectorAll('input[name="deviceMode"]').forEach((radio) => {
         radio.addEventListener("change", () => {
           const mode = document.querySelector(
@@ -384,17 +866,15 @@
           const devices = await res.json();
           const select = document.getElementById("port-select");
           select.innerHTML = '<option value="">Select a device...</option>';
-          if (devices.length === 0) {
-            select.innerHTML +=
-              '<option value="" disabled>No devices found</option>';
-          } else {
-            devices.forEach((d) => {
-              const label = d.vendorId
-                ? `${d.path}  [${d.vendorId}:${d.productId}]`
-                : d.path;
-              select.innerHTML += `<option value="${d.path}">${label}</option>`;
-            });
-          }
+          devices.length === 0
+            ? (select.innerHTML +=
+                '<option value="" disabled>No devices found</option>')
+            : devices.forEach((d) => {
+                const label = d.vendorId
+                  ? `${d.path}  [${d.vendorId}:${d.productId}]`
+                  : d.path;
+                select.innerHTML += `<option value="${d.path}">${label}</option>`;
+              });
           document.getElementById("scan-results").style.display = "block";
         } catch (e) {
           showStatus("Scan failed: " + e.message, "error");
@@ -408,7 +888,6 @@
         const mode = document.querySelector(
           'input[name="deviceMode"]:checked',
         ).value;
-
         const config = {
           device: {},
           gestures: {
@@ -435,10 +914,14 @@
           }
           config.device.port = port;
         } else {
-          const vidStr = document.getElementById("vendorId").value.trim();
-          const pidStr = document.getElementById("productId").value.trim();
-          const vid = parseInt(vidStr, 16);
-          const pid = parseInt(pidStr, 16);
+          const vid = parseInt(
+            document.getElementById("vendorId").value.trim(),
+            16,
+          );
+          const pid = parseInt(
+            document.getElementById("productId").value.trim(),
+            16,
+          );
           if (!vid || !pid) {
             showStatus("Please enter valid vendor and product IDs.", "error");
             return;
@@ -454,8 +937,7 @@
             body: JSON.stringify(config),
           });
           if (!res.ok) {
-            const text = await res.text();
-            showStatus("Save failed: " + text, "error");
+            showStatus("Save failed: " + (await res.text()), "error");
             return;
           }
           showStatus(
@@ -474,7 +956,186 @@
         el.className = "status-msg " + type;
       }
 
+      // ── Control view ─────────────────────────────────────────────────
+
+      async function updateConnectionStatus() {
+        try {
+          const res = await fetch("/api/status");
+          const s = await res.json();
+          const dot = document.getElementById("conn-dot");
+          const lbl = document.getElementById("conn-label");
+          if (s.connected) {
+            dot.className = "conn-dot connected";
+            lbl.textContent =
+              "Connected" + (s.portPath ? " — " + s.portPath : "");
+          } else {
+            dot.className = "conn-dot disconnected";
+            lbl.textContent = "Not connected";
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+
+      function setFb(id, msg, isOk) {
+        const el = document.getElementById(id);
+        el.textContent = msg;
+        el.className = "ctrl-fb " + (isOk ? "ok" : "err");
+        setTimeout(() => {
+          el.textContent = "";
+          el.className = "ctrl-fb";
+        }, 3000);
+      }
+
+      async function devicePost(path, body) {
+        const res = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        return res.json();
+      }
+
+      async function sendDisplayText() {
+        const text = document.getElementById("ctrl-text").value;
+        try {
+          const r = await devicePost("/api/device/text", { text });
+          setFb("fb-text", r.ok ? "Sent" : r.error, r.ok);
+        } catch (e) {
+          setFb("fb-text", e.message, false);
+        }
+      }
+
+      async function sendStatusText() {
+        const text = document.getElementById("ctrl-status").value;
+        try {
+          const r = await devicePost("/api/device/status-text", { text });
+          setFb("fb-status", r.ok ? "Sent" : r.error, r.ok);
+        } catch (e) {
+          setFb("fb-status", e.message, false);
+        }
+      }
+
+      async function clearDisplay() {
+        try {
+          const r = await devicePost("/api/device/clear", {});
+          setFb("fb-clear", r.ok ? "Cleared" : r.error, r.ok);
+        } catch (e) {
+          setFb("fb-clear", e.message, false);
+        }
+      }
+
+      async function sendLabels() {
+        const labels = [0, 1, 2, 3].map(
+          (i) => document.getElementById("lbl" + i).value,
+        );
+        try {
+          const r = await devicePost("/api/device/labels", { labels });
+          setFb("fb-labels", r.ok ? "Applied" : r.error, r.ok);
+        } catch (e) {
+          setFb("fb-labels", e.message, false);
+        }
+      }
+
+      function hexToRgb(hex) {
+        const n = parseInt(hex.slice(1), 16);
+        return { r: (n >> 16) & 0xff, g: (n >> 8) & 0xff, b: n & 0xff };
+      }
+
+      async function sendLeds() {
+        const leds = [0, 1, 2, 3].map((i) => {
+          const { r, g, b } = hexToRgb(
+            document.getElementById("led" + i).value,
+          );
+          return { index: i, r, g, b };
+        });
+        try {
+          const r = await devicePost("/api/device/leds", { leds });
+          setFb("fb-leds", r.ok ? "✓" : r.error, r.ok);
+        } catch (e) {
+          setFb("fb-leds", e.message, false);
+        }
+      }
+
+      async function sendNotify() {
+        const text = document.getElementById("notify-text").value.trim();
+        const category =
+          document.getElementById("notify-category").value.trim() || undefined;
+        const resultEl = document.getElementById("notify-result");
+
+        if (!text) {
+          resultEl.textContent = "Enter notification text first.";
+          resultEl.className = "notify-result visible err";
+          return;
+        }
+
+        const wsPort = currentConfig?.server?.port ?? 52914;
+        const id = crypto.randomUUID();
+
+        resultEl.textContent = "Waiting for response…";
+        resultEl.className = "notify-result visible";
+
+        let ws;
+        try {
+          ws = new WebSocket("ws://localhost:" + wsPort);
+        } catch (e) {
+          resultEl.textContent = "WebSocket error: " + e.message;
+          resultEl.className = "notify-result visible err";
+          return;
+        }
+
+        const timeout = setTimeout(() => {
+          ws.close();
+          resultEl.textContent = "Timed out waiting for response.";
+          resultEl.className = "notify-result visible err";
+        }, 30000);
+
+        ws.onopen = () => {
+          ws.send(
+            JSON.stringify({
+              type: "notification",
+              id,
+              text,
+              ...(category ? { category } : {}),
+            }),
+          );
+        };
+
+        ws.onmessage = (evt) => {
+          try {
+            const msg = JSON.parse(evt.data);
+            if (msg.id !== id) return;
+            clearTimeout(timeout);
+            ws.close();
+            if (msg.type === "response") {
+              resultEl.textContent =
+                'Response: action="' +
+                msg.action +
+                '" label="' +
+                msg.label +
+                '"';
+              resultEl.className = "notify-result visible ok";
+            } else if (msg.type === "error") {
+              resultEl.textContent = "Error: " + msg.error;
+              resultEl.className = "notify-result visible err";
+            }
+          } catch {
+            /* ignore non-JSON */
+          }
+        };
+
+        ws.onerror = () => {
+          clearTimeout(timeout);
+          resultEl.textContent = "Could not connect to WebSocket server.";
+          resultEl.className = "notify-result visible err";
+        };
+      }
+
       loadConfig();
+
+      // Control tab is default — start polling immediately
+      updateConnectionStatus();
+      statusPollInterval = setInterval(updateConnectionStatus, 3000);
     </script>
   </body>
 </html>

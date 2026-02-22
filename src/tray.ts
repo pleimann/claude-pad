@@ -44,7 +44,7 @@ async function tryStartBridge() {
 
 async function onTrayClick() {
   if (settingsHandle) return; // popover already open
-  settingsHandle = await startSettingsServer(configPath, async () => {
+  settingsHandle = await startSettingsServer(configPath, bridge, async () => {
     // Config saved — restart bridge with new config, then close popover
     bridge?.shutdown();
     bridge = null;

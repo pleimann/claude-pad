@@ -8,3 +8,5 @@ bun.lockb
 .idea/
 *.log
 *.bak
+tray_swift/.build/
+tray_swift/.swiftpm/

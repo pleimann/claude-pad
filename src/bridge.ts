@@ -15,6 +15,11 @@ export interface BridgeHandle {
   shutdown(): void;
   getStatus(): BridgeStatus;
   onStatusChange(cb: (status: BridgeStatus) => void): void;
+  sendText(text: string): boolean;
+  sendStatus(text: string): boolean;
+  clearDisplay(): boolean;
+  sendLeds(leds: Array<{ index: number; r: number; g: number; b: number }>): boolean;
+  sendLabels(labels: string[]): boolean;
 }
 
 export async function startBridge(configPath: string): Promise<BridgeHandle> {
@@ -111,6 +116,21 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
     },
     onStatusChange(cb: (status: BridgeStatus) => void) {
       statusListeners.push(cb);
+    },
+    sendText(text: string): boolean {
+      return serialDevice.sendText(text);
+    },
+    sendStatus(text: string): boolean {
+      return serialDevice.sendStatus(text);
+    },
+    clearDisplay(): boolean {
+      return serialDevice.clearDisplay();
+    },
+    sendLeds(leds: Array<{ index: number; r: number; g: number; b: number }>): boolean {
+      return serialDevice.sendLeds(leds);
+    },
+    sendLabels(labels: string[]): boolean {
+      return serialDevice.sendLabels(labels);
     },
   };
 }

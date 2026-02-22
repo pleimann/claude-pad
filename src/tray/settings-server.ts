@@ -3,6 +3,7 @@ import { stringify } from 'yaml';
 import { loadConfig } from '@/config/loader.js';
 import { listPorts } from '@/serial/discovery.js';
 import type { Config } from '@/types.js';
+import type { BridgeHandle } from '@/bridge.js';
 
 // Embed the settings HTML as a Bun asset (works in dev mode and after bun --compile)
 import settingsHtmlPath from '@/static/settings.html' with { type: 'file' };
@@ -19,6 +20,7 @@ export interface SettingsServerHandle {
  */
 export async function startSettingsServer(
   configPath: string,
+  bridge: BridgeHandle | null,
   onSaved?: () => void,
 ): Promise<SettingsServerHandle> {
   const settingsHtml = readFileSync(settingsHtmlPath, 'utf8');
@@ -80,6 +82,45 @@ export async function startSettingsServer(
         } catch (err: any) {
           return new Response(err.message, { status: 500 });
         }
+      }
+
+      if (url.pathname === '/api/status') {
+        const status = bridge ? bridge.getStatus() : { connected: false, portPath: null, pendingCount: 0 };
+        return Response.json(status, { headers: corsHeaders });
+      }
+
+      if (url.pathname === '/api/device/text' && req.method === 'POST') {
+        if (!bridge) return Response.json({ ok: false, error: 'bridge not running' }, { headers: corsHeaders });
+        const { text } = await req.json() as { text: string };
+        const ok = bridge.sendText(text);
+        return Response.json({ ok }, { headers: corsHeaders });
+      }
+
+      if (url.pathname === '/api/device/status-text' && req.method === 'POST') {
+        if (!bridge) return Response.json({ ok: false, error: 'bridge not running' }, { headers: corsHeaders });
+        const { text } = await req.json() as { text: string };
+        const ok = bridge.sendStatus(text);
+        return Response.json({ ok }, { headers: corsHeaders });
+      }
+
+      if (url.pathname === '/api/device/clear' && req.method === 'POST') {
+        if (!bridge) return Response.json({ ok: false, error: 'bridge not running' }, { headers: corsHeaders });
+        const ok = bridge.clearDisplay();
+        return Response.json({ ok }, { headers: corsHeaders });
+      }
+
+      if (url.pathname === '/api/device/leds' && req.method === 'POST') {
+        if (!bridge) return Response.json({ ok: false, error: 'bridge not running' }, { headers: corsHeaders });
+        const { leds } = await req.json() as { leds: Array<{ index: number; r: number; g: number; b: number }> };
+        const ok = bridge.sendLeds(leds);
+        return Response.json({ ok }, { headers: corsHeaders });
+      }
+
+      if (url.pathname === '/api/device/labels' && req.method === 'POST') {
+        if (!bridge) return Response.json({ ok: false, error: 'bridge not running' }, { headers: corsHeaders });
+        const { labels } = await req.json() as { labels: string[] };
+        const ok = bridge.sendLabels(labels);
+        return Response.json({ ok }, { headers: corsHeaders });
       }
 
       if (url.pathname === '/api/close') {

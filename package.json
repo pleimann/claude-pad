@@ -9,8 +9,7 @@
     "dev": "bun --watch src/tray.ts",
     "build:arm64": "bun build --compile --target bun-darwin-arm64 --minify --outfile dist/camel-pad-tray-arm64 src/tray.ts",
     "build:x64": "bun build --compile --target bun-darwin-x64 --minify --outfile dist/camel-pad-tray-x64 src/tray.ts",
-    "bundle:app": "bash scripts/build-app.sh",
-    "harness": "bun run src/harness/index.ts"
+    "bundle:app": "bash scripts/build-app.sh"
   },
   "keywords": ["macropad", "serial", "notifications"],
   "license": "MIT",
