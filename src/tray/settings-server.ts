@@ -6,7 +6,7 @@ import type { Config } from '@/types.js';
 import type { BridgeHandle } from '@/bridge.js';
 
 // Embed the settings HTML as a Bun asset (works in dev mode and after bun --compile)
-import settingsHtmlPath from '@/static/settings.html' with { type: 'file' };
+import settingsHtmlPath from '@/static/tray.html' with { type: 'file' };
 
 export interface SettingsServerHandle {
   port: number;

@@ -472,6 +472,12 @@
       </div>
     </div>
 
+    <!-- Connection status -->
+    <div class="conn-banner">
+      <span class="conn-dot disconnected" id="conn-dot"></span>
+      <span id="conn-label">Checking…</span>
+    </div>
+
     <!-- ═══════════════════════════════════════════════════════════════
          CONTROL VIEW
          Layout math at 480px min-width:
@@ -479,12 +485,6 @@
            section padding: 16px × 2 → content = 400px
          ═══════════════════════════════════════════════════════════════ -->
     <div id="view-control" class="view active">
-      <!-- Connection status -->
-      <div class="conn-banner">
-        <span class="conn-dot disconnected" id="conn-dot"></span>
-        <span id="conn-label">Checking…</span>
-      </div>
-
       <!-- Display controls
            Row 1: [textarea flex] [Send ~52px]
            Row 2: [Status ~44px] [input flex] [Send ~52px] [fb auto]
@@ -798,15 +798,6 @@
           .getElementById("view-control")
           .classList.toggle("active", tab === "control");
 
-        if (tab === "control") {
-          if (!statusPollInterval) {
-            updateConnectionStatus();
-            statusPollInterval = setInterval(updateConnectionStatus, 3000);
-          }
-        } else {
-          clearInterval(statusPollInterval);
-          statusPollInterval = null;
-        }
       }
 
       // ── Settings view ────────────────────────────────────────────────
