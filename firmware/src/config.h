@@ -74,6 +74,14 @@
 #define FONT_NOTIF    &lv_font_montserrat_28
 #define FONT_BUTTON   &lv_font_montserrat_32
 
+// ----- SD Card (SDMMC 1-bit mode) -----
+// Note: GPIO1 and GPIO2 are shared with the ST7701 3-wire SPI init interface.
+// The SPI init is one-shot at boot; after display.begin() completes, the SDMMC
+// host can safely claim these pins via the GPIO matrix.
+#define PIN_SD_CLK 1
+#define PIN_SD_CMD 2
+#define PIN_SD_D0  42
+
 // ----- Communication Protocol -----
 #define MSG_DISPLAY_TEXT 0x01
 #define MSG_BUTTON 0x02

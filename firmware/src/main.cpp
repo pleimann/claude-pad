@@ -3,14 +3,17 @@
 #include "display/display_manager.h"
 #include "seesaw/seesaw_manager.h"
 #include "comms/serial_comms.h"
+#include "sdcard/sdcard_manager.h"
 
-// With ARDUINO_USB_MODE=1 (HWCDC), Serial = USB-JTAG/Serial.
+// With ARDUINO_USB_MODE=0 (TinyUSB OTG), Serial = USB CDC.
+// The device enumerates as a composite CDC + MSC device.
 // Debug prints are suppressed once the bridge connects (to avoid
 // mixing text with binary protocol frames on the same serial port).
 
 static DisplayManager display;
 static SeesawManager seesaw;
 static SerialComms comms;
+static SDCardManager sdcard;
 
 // Debug print helper — suppressed when bridge is connected
 #define DBG(fmt, ...) do { if (!comms.bridgeConnected()) Serial.printf(fmt "\n", ##__VA_ARGS__); } while(0)
@@ -80,24 +83,38 @@ static void onSetButtonLabels(const char* labels[4]) {
 
 void setup() {
     Serial.begin(SERIAL_BAUD);
-    delay(2000);  // Let HWCDC enumerate
+    delay(2000);  // Let TinyUSB CDC enumerate
 
     // Setup debug prints always go through (bridge can't be connected yet)
     Serial.println("\n=== CamelPad Firmware Starting ===");
 
-    Serial.println("[1/3] Initializing display...");
+    Serial.println("[1/4] Initializing display...");
     display.begin();
     display.setStatusText("Booting...");
     display.update();
-    Serial.println("[1/3] Display OK");
+    Serial.println("[1/4] Display OK");
 
-    Serial.println("[2/3] Initializing Seesaw...");
+    // SD card init must happen after display.begin() because GPIO1/GPIO2 are
+    // shared between the ST7701 3-wire SPI init (one-shot) and SDMMC CLK/CMD.
+    Serial.println("[2/4] Initializing SD card + USB MSC...");
+    bool sdOk = sdcard.begin();
+    if (sdOk) {
+        display.setStatusText("SD card mounted");
+        display.update();
+    } else {
+        display.setStatusText("No SD card");
+        display.update();
+    }
+    sdcard.beginUSB();  // Register MSC and start USB (CDC + MSC composite)
+    Serial.println("[2/4] SD card + USB MSC OK");
+
+    Serial.println("[3/4] Initializing Seesaw...");
     if (!seesaw.begin()) {
-        Serial.println("[2/3] Seesaw init FAILED!");
+        Serial.println("[3/4] Seesaw init FAILED!");
         display.setStatusText("Seesaw init FAILED");
         display.update();
     } else {
-        Serial.println("[2/3] Seesaw OK");
+        Serial.println("[3/4] Seesaw OK");
         for (int i = 0; i < SEESAW_NEOPIXEL_COUNT; i++) {
             seesaw.setPixelColor(i, 0x001100);
         }
@@ -107,7 +124,7 @@ void setup() {
 
     seesaw.onButtonChange(onButtonChange);
 
-    Serial.println("[3/3] Initializing comms...");
+    Serial.println("[4/4] Initializing comms...");
     comms.begin();
     comms.onDisplayText(onDisplayText);
     comms.onStatusText(onStatusText);
@@ -115,7 +132,7 @@ void setup() {
     comms.onClearDisplay(onClearDisplay);
     comms.onSetButtonLabels(onSetButtonLabels);
     comms.onBridgeDisconnected(onBridgeDisconnected);
-    Serial.println("[3/3] Comms OK");
+    Serial.println("[4/4] Comms OK");
 
     seesaw.clearPixels();
     seesaw.showPixels();
