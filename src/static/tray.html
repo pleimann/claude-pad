@@ -1126,10 +1126,15 @@
             lbl.className = 'kb-gesture-label';
             lbl.textContent = g.label;
 
+            // Support both the action/label format and the older keys:[...] format.
+            // If only keys is present, seed action with the joined sequence so the
+            // user can see and edit what they previously had in their config.
+            const keysStr = Array.isArray(mapping.keys) ? mapping.keys.join(', ') : '';
+
             const actionIn = document.createElement('input');
             actionIn.type = 'text';
             actionIn.id = 'kb-' + keyId + '-' + g.id + '-action';
-            actionIn.value = mapping.action || '';
+            actionIn.value = mapping.action || keysStr;
             actionIn.placeholder = 'e.g. approve';
 
             const labelIn = document.createElement('input');
@@ -1226,14 +1231,21 @@
       });
 
       async function loadConfig() {
+        let config;
         try {
           const res = await fetch("/api/config");
-          currentConfig = await res.json();
-          populateForm(currentConfig);
-          renderKeybindings(currentConfig.keys ?? {});
+          config = await res.json();
+          currentConfig = config;
         } catch (e) {
           showStatus("Failed to load config: " + e.message, "error");
+          return;
         }
+        try {
+          populateForm(config);
+        } catch (e) {
+          showStatus("Failed to populate settings form: " + e.message, "error");
+        }
+        renderKeybindings(config.keys ?? {});
       }
 
       function populateForm(config) {
