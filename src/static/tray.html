@@ -1078,9 +1078,9 @@
 
       const KB_KEY_NAMES = ['Key 1', 'Key 2', 'Key 3', 'Key 4'];
       const KB_GESTURES = [
-        { id: 'press',       label: 'Press' },
-        { id: 'doublePress', label: 'Double Press' },
-        { id: 'longPress',   label: 'Long Press' },
+        { id: 'press',       snake: 'press',        label: 'Press' },
+        { id: 'doublePress', snake: 'double_press',  label: 'Double Press' },
+        { id: 'longPress',   snake: 'long_press',    label: 'Long Press' },
       ];
 
       function renderKeybindings(keys) {
@@ -1117,7 +1117,7 @@
           card.appendChild(header);
 
           for (const g of KB_GESTURES) {
-            const mapping = keyMapping[g.id] || {};
+            const mapping = keyMapping[g.id] || keyMapping[g.snake] || {};
 
             const row = document.createElement('div');
             row.className = 'kb-gesture-row';
