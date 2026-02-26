@@ -546,9 +546,18 @@
         text-align: center;
       }
 
-      .log-dir-in  { background: #d4f4dd; color: #1a5c2a; }
-      .log-dir-out { background: #dde9ff; color: #1a3a8a; }
-      .log-dir-sys { background: #f0f0f2; color: #6e6e73; }
+      .log-dir-in {
+        background: #d4f4dd;
+        color: #1a5c2a;
+      }
+      .log-dir-out {
+        background: #dde9ff;
+        color: #1a3a8a;
+      }
+      .log-dir-sys {
+        background: #f0f0f2;
+        color: #6e6e73;
+      }
 
       .log-type {
         color: #6e6e73;
@@ -627,16 +636,28 @@
     <!-- Tab bar -->
     <div class="tab-bar">
       <div class="tab-seg">
-        <button class="tab-btn active" data-tab="control" onclick="switchTab('control')">
+        <button
+          class="tab-btn active"
+          data-tab="control"
+          onclick="switchTab('control')"
+        >
           Control
         </button>
-        <button class="tab-btn" data-tab="settings" onclick="switchTab('settings')">
+        <button
+          class="tab-btn"
+          data-tab="settings"
+          onclick="switchTab('settings')"
+        >
           Settings
         </button>
         <button class="tab-btn" data-tab="keys" onclick="switchTab('keys')">
           Keys
         </button>
-        <button class="tab-btn" data-tab="monitor" onclick="switchTab('monitor')">
+        <button
+          class="tab-btn"
+          data-tab="monitor"
+          onclick="switchTab('monitor')"
+        >
           Monitor
         </button>
       </div>
@@ -716,24 +737,6 @@
            LED row: [led-grid flex (4-col grid)] [fb auto]           -->
       <div class="ctrl-section">
         <h2>Buttons</h2>
-
-        <p class="ctrl-sub-h">Labels</p>
-        <div class="ctrl-field">
-          <div class="label-grid">
-            <input type="text" id="lbl0" placeholder="Key 1" maxlength="12" />
-            <input type="text" id="lbl1" placeholder="Key 2" maxlength="12" />
-            <input type="text" id="lbl2" placeholder="Key 3" maxlength="12" />
-            <input type="text" id="lbl3" placeholder="Key 4" maxlength="12" />
-          </div>
-          <button
-            type="button"
-            class="btn btn-secondary btn-small"
-            onclick="sendLabels()"
-          >
-            Apply
-          </button>
-          <span class="ctrl-fb" id="fb-labels"></span>
-        </div>
 
         <p class="ctrl-sub-h">LED Colors</p>
         <div class="ctrl-field">
@@ -964,9 +967,20 @@
          ═══════════════════════════════════════════════════════════════ -->
     <div id="view-monitor" class="view">
       <div class="mon-toolbar">
-        <input type="text" id="mon-filter" placeholder="Filter…" oninput="applyMonitorFilter()" />
+        <input
+          type="text"
+          id="mon-filter"
+          placeholder="Filter…"
+          oninput="applyMonitorFilter()"
+        />
         <label><input type="checkbox" id="mon-pause" /> Pause</label>
-        <button type="button" class="btn btn-secondary btn-small" onclick="clearMonitorLog()">Clear</button>
+        <button
+          type="button"
+          class="btn btn-secondary btn-small"
+          onclick="clearMonitorLog()"
+        >
+          Clear
+        </button>
       </div>
       <div class="mon-log" id="mon-log"></div>
     </div>
@@ -982,10 +996,18 @@
         document.querySelectorAll(".tab-btn").forEach((b) => {
           b.classList.toggle("active", b.dataset.tab === tab);
         });
-        document.getElementById("view-control").classList.toggle("active", tab === "control");
-        document.getElementById("view-settings").classList.toggle("active", tab === "settings");
-        document.getElementById("view-keys").classList.toggle("active", tab === "keys");
-        document.getElementById("view-monitor").classList.toggle("active", tab === "monitor");
+        document
+          .getElementById("view-control")
+          .classList.toggle("active", tab === "control");
+        document
+          .getElementById("view-settings")
+          .classList.toggle("active", tab === "settings");
+        document
+          .getElementById("view-keys")
+          .classList.toggle("active", tab === "keys");
+        document
+          .getElementById("view-monitor")
+          .classList.toggle("active", tab === "monitor");
         if (tab === "monitor") startMonitorPolling();
         else stopMonitorPolling();
       }
@@ -997,16 +1019,22 @@
 
       function fmtTime(ts) {
         const d = new Date(ts);
-        return d.toLocaleTimeString("en-US", { hour12: false }) + "." +
-          String(d.getMilliseconds()).padStart(3, "0");
+        return (
+          d.toLocaleTimeString("en-US", { hour12: false }) +
+          "." +
+          String(d.getMilliseconds()).padStart(3, "0")
+        );
       }
 
       function appendLogEntries(entries) {
         if (!entries.length) return;
         const log = document.getElementById("mon-log");
-        const filter = document.getElementById("mon-filter").value.toLowerCase();
+        const filter = document
+          .getElementById("mon-filter")
+          .value.toLowerCase();
         const paused = document.getElementById("mon-pause").checked;
-        const atBottom = log.scrollHeight - log.scrollTop <= log.clientHeight + 4;
+        const atBottom =
+          log.scrollHeight - log.scrollTop <= log.clientHeight + 4;
 
         for (const e of entries) {
           const row = document.createElement("div");
@@ -1050,7 +1078,9 @@
           const { entries, cursor } = await res.json();
           monitorCursor = cursor;
           appendLogEntries(entries);
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
       }
 
       function startMonitorPolling() {
@@ -1060,7 +1090,10 @@
       }
 
       function stopMonitorPolling() {
-        if (monitorPollInterval) { clearInterval(monitorPollInterval); monitorPollInterval = null; }
+        if (monitorPollInterval) {
+          clearInterval(monitorPollInterval);
+          monitorPollInterval = null;
+        }
       }
 
       function clearMonitorLog() {
@@ -1068,48 +1101,53 @@
       }
 
       function applyMonitorFilter() {
-        const filter = document.getElementById("mon-filter").value.toLowerCase();
+        const filter = document
+          .getElementById("mon-filter")
+          .value.toLowerCase();
         document.querySelectorAll("#mon-log .log-row").forEach((row) => {
-          row.classList.toggle("filtered", !!filter && !row.dataset.text.includes(filter));
+          row.classList.toggle(
+            "filtered",
+            !!filter && !row.dataset.text.includes(filter),
+          );
         });
       }
 
       // ── Keys view ────────────────────────────────────────────────────
 
-      const KB_KEY_NAMES = ['Key 1', 'Key 2', 'Key 3', 'Key 4'];
+      const KB_KEY_NAMES = ["Key 1", "Key 2", "Key 3", "Key 4"];
       const KB_GESTURES = [
-        { id: 'press',       snake: 'press',        label: 'Press' },
-        { id: 'doublePress', snake: 'double_press',  label: 'Double Press' },
-        { id: 'longPress',   snake: 'long_press',    label: 'Long Press' },
+        { id: "press", snake: "press", label: "Press" },
+        { id: "doublePress", snake: "double_press", label: "Double Press" },
+        { id: "longPress", snake: "long_press", label: "Long Press" },
       ];
 
       function renderKeybindings(keys) {
-        const container = document.getElementById('view-keys');
-        container.innerHTML = '';
+        const container = document.getElementById("view-keys");
+        container.innerHTML = "";
 
         // Intro hint
-        const hint = document.createElement('p');
-        hint.className = 'kb-hint';
+        const hint = document.createElement("p");
+        hint.className = "kb-hint";
         hint.textContent =
-          'Map each button gesture to an action returned to Claude Code. ' +
+          "Map each button gesture to an action returned to Claude Code. " +
           'Action is the value sent on response (e.g. "approve"); ' +
           'Label is shown on the device display (e.g. "Yes").';
         container.appendChild(hint);
 
         for (let i = 0; i < 4; i++) {
-          const keyId = 'key' + i;
+          const keyId = "key" + i;
           const keyMapping = keys[keyId] || {};
 
-          const card = document.createElement('div');
-          card.className = 'section';
+          const card = document.createElement("div");
+          card.className = "section";
 
-          const title = document.createElement('h2');
+          const title = document.createElement("h2");
           title.textContent = KB_KEY_NAMES[i];
           card.appendChild(title);
 
           // Column headers
-          const header = document.createElement('div');
-          header.className = 'kb-col-header';
+          const header = document.createElement("div");
+          header.className = "kb-col-header";
           header.innerHTML =
             '<span class="kb-gesture-label"></span>' +
             '<span class="kb-col-name">Action</span>' +
@@ -1119,29 +1157,31 @@
           for (const g of KB_GESTURES) {
             const mapping = keyMapping[g.id] || keyMapping[g.snake] || {};
 
-            const row = document.createElement('div');
-            row.className = 'kb-gesture-row';
+            const row = document.createElement("div");
+            row.className = "kb-gesture-row";
 
-            const lbl = document.createElement('span');
-            lbl.className = 'kb-gesture-label';
+            const lbl = document.createElement("span");
+            lbl.className = "kb-gesture-label";
             lbl.textContent = g.label;
 
             // Support both the action/label format and the older keys:[...] format.
             // If only keys is present, seed action with the joined sequence so the
             // user can see and edit what they previously had in their config.
-            const keysStr = Array.isArray(mapping.keys) ? mapping.keys.join(', ') : '';
+            const keysStr = Array.isArray(mapping.keys)
+              ? mapping.keys.join(", ")
+              : "";
 
-            const actionIn = document.createElement('input');
-            actionIn.type = 'text';
-            actionIn.id = 'kb-' + keyId + '-' + g.id + '-action';
+            const actionIn = document.createElement("input");
+            actionIn.type = "text";
+            actionIn.id = "kb-" + keyId + "-" + g.id + "-action";
             actionIn.value = mapping.action || keysStr;
-            actionIn.placeholder = 'e.g. approve';
+            actionIn.placeholder = "e.g. approve";
 
-            const labelIn = document.createElement('input');
-            labelIn.type = 'text';
-            labelIn.id = 'kb-' + keyId + '-' + g.id + '-label';
-            labelIn.value = mapping.label || '';
-            labelIn.placeholder = 'e.g. Yes';
+            const labelIn = document.createElement("input");
+            labelIn.type = "text";
+            labelIn.id = "kb-" + keyId + "-" + g.id + "-label";
+            labelIn.value = mapping.label || "";
+            labelIn.placeholder = "e.g. Yes";
 
             row.append(lbl, actionIn, labelIn);
             card.appendChild(row);
@@ -1151,14 +1191,14 @@
         }
 
         // Status message
-        const statusMsg = document.createElement('div');
-        statusMsg.id = 'kb-status-msg';
-        statusMsg.className = 'status-msg';
+        const statusMsg = document.createElement("div");
+        statusMsg.id = "kb-status-msg";
+        statusMsg.className = "status-msg";
         container.appendChild(statusMsg);
 
         // Footer with Save button
-        const footer = document.createElement('div');
-        footer.className = 'footer';
+        const footer = document.createElement("div");
+        footer.className = "footer";
         footer.innerHTML =
           '<button type="button" class="btn btn-secondary" onclick="window.close()">Cancel</button>' +
           '<button type="button" class="btn btn-primary" onclick="saveKeybindings()">Save</button>';
@@ -1168,14 +1208,18 @@
       function collectKeybindings() {
         const keys = {};
         for (let i = 0; i < 4; i++) {
-          const keyId = 'key' + i;
+          const keyId = "key" + i;
           const keyMapping = {};
           for (const g of KB_GESTURES) {
-            const actionEl = document.getElementById('kb-' + keyId + '-' + g.id + '-action');
-            const labelEl  = document.getElementById('kb-' + keyId + '-' + g.id + '-label');
+            const actionEl = document.getElementById(
+              "kb-" + keyId + "-" + g.id + "-action",
+            );
+            const labelEl = document.getElementById(
+              "kb-" + keyId + "-" + g.id + "-label",
+            );
             if (!actionEl || !labelEl) continue;
             const action = actionEl.value.trim();
-            const label  = labelEl.value.trim();
+            const label = labelEl.value.trim();
             if (action || label) {
               keyMapping[g.id] = { action, label };
             }
@@ -1191,27 +1235,30 @@
         const keys = collectKeybindings();
         const config = { ...currentConfig, keys };
         try {
-          const res = await fetch('/api/config', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          const res = await fetch("/api/config", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(config),
           });
           if (!res.ok) {
-            showKbStatus('Save failed: ' + (await res.text()), 'error');
+            showKbStatus("Save failed: " + (await res.text()), "error");
             return;
           }
           currentConfig = config;
-          showKbStatus('Keybindings saved. camel-pad will reload the config.', 'success');
-          setTimeout(() => fetch('/api/close').catch(() => {}), 1500);
+          showKbStatus(
+            "Keybindings saved. camel-pad will reload the config.",
+            "success",
+          );
+          setTimeout(() => fetch("/api/close").catch(() => {}), 1500);
         } catch (e) {
-          showKbStatus('Save failed: ' + e.message, 'error');
+          showKbStatus("Save failed: " + e.message, "error");
         }
       }
 
       function showKbStatus(msg, type) {
-        const el = document.getElementById('kb-status-msg');
+        const el = document.getElementById("kb-status-msg");
         el.textContent = msg;
-        el.className = 'status-msg ' + type;
+        el.className = "status-msg " + type;
       }
 
       // ── Settings view ────────────────────────────────────────────────
@@ -1337,7 +1384,8 @@
             timeoutMs: parseInt(document.getElementById("timeoutMs").value),
           },
           keys: currentConfig?.keys ?? {},
-          handedness: document.querySelector('input[name="handedness"]:checked').value,
+          handedness: document.querySelector('input[name="handedness"]:checked')
+            .value,
         };
 
         if (mode === "port") {

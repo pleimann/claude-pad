@@ -55,22 +55,6 @@ keys:
     long_press:
       keys: ["esc"]
 
-# Chord mappings
-# buttons: list of button indices pressed together
-# keys: key sequence to send
-chords:
-  - buttons: [0, 1] # btn_a + btn_b together
-    keys: ["ctrl+r"]
-
-  - buttons: [0, 2] # btn_a + btn_c together
-    keys: ["ctrl+l"]
-
-  - buttons: [1, 2] # btn_b + btn_c together
-    keys: ["ctrl+g"]
-
-  - buttons: [0, 1, 2] # Three-button chord
-    keys: ["ctrl+alt+delete"]
-
 # Key Format Reference
 # ====================
 # Modifiers: ctrl+, alt+, shift+, meta+ (or cmd+, command+, win+, super+)
