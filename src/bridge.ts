@@ -27,6 +27,36 @@ function remapButtonIndex(i: number, h: 'left' | 'right'): number {
   return h === 'right' ? 3 - i : i;
 }
 
+function extractLabelsForDisplay(config: any, handedness: 'left' | 'right'): string[] {
+  // Extract labels for each logical key (key0-key3)
+  const keyLabels: string[] = [];
+
+  for (let i = 0; i <= 3; i++) {
+    const keyId = `key${i}`;
+    const keyMapping = config.keys[keyId];
+
+    // Try to get label from press, then doublePress, then longPress
+    const label = keyMapping?.press?.label
+      || keyMapping?.doublePress?.label
+      || keyMapping?.longPress?.label
+      || '';
+
+    keyLabels.push(label);
+  }
+
+  // Remap labels to physical button positions based on handedness
+  // Physical buttons 0-3 (left to right)
+  // Right-handed: P0→key3, P1→key2, P2→key1, P3→key0 (reverse)
+  // Left-handed:  P0→key0, P1→key1, P2→key2, P3→key3 (direct)
+  const physicalLabels: string[] = [];
+  for (let physicalPos = 0; physicalPos <= 3; physicalPos++) {
+    const logicalKey = remapButtonIndex(physicalPos, handedness);
+    physicalLabels.push(keyLabels[logicalKey]);
+  }
+
+  return physicalLabels;
+}
+
 export async function startBridge(configPath: string): Promise<BridgeHandle> {
   const configWatcher = new ConfigWatcher(configPath);
   const config = configWatcher.getConfig();
@@ -87,6 +117,12 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
     pushLog('sys', 'connected', `Connected${portPath ? ` — ${portPath}` : ''}`);
     emitStatus();
     serialDevice.sendStatus('Connected');
+
+    // Send button labels from config
+    const labels = extractLabelsForDisplay(config, handedness);
+    pushLog('out', 'labels', labels.join(' | '));
+    serialDevice.sendLabels(labels);
+
     pingInterval = setInterval(() => serialDevice.sendPing(), 5000);
   });
 
@@ -133,6 +169,13 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
       doublePressMs: newConfig.gestures.doublePressMs,
     });
     notificationServer.updateConfig(newConfig);
+
+    // Update button labels if connected
+    if (connected) {
+      const labels = extractLabelsForDisplay(newConfig, handedness);
+      pushLog('out', 'labels', labels.join(' | '));
+      serialDevice.sendLabels(labels);
+    }
   });
 
   // Start services
@@ -178,9 +221,8 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
       return serialDevice.sendLeds(remapped);
     },
     sendLabels(labels: string[]): boolean {
-      const reordered = handedness === 'right' ? [...labels].reverse() : labels;
       pushLog('out', 'labels', labels.join(' | '));
-      return serialDevice.sendLabels(reordered);
+      return serialDevice.sendLabels(labels);
     },
   };
 }
