@@ -8,29 +8,33 @@ const WebSocket = require('ws');
 const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto');
+const yaml = require('yaml');
 
 const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-const configPath = path.join(projectDir, '.claude', 'camel-pad.local.md');
+const configPath = path.join(projectDir, 'config.yaml');
 
 function parseConfig(configPath) {
   if (!fs.existsSync(configPath)) {
     return null;
   }
 
-  const content = fs.readFileSync(configPath, 'utf8');
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
+  try {
+    const content = fs.readFileSync(configPath, 'utf8');
+    const config = yaml.parse(content);
 
-  const yaml = match[1];
-  const config = {};
+    if (!config || !config.server) {
+      return null;
+    }
 
-  const endpointMatch = yaml.match(/endpoint:\s*(.+)/);
-  if (endpointMatch) config.endpoint = endpointMatch[1].trim();
+    // Extract settings needed for WebSocket connection
+    const endpoint = `ws://${config.server.host || 'localhost'}:${config.server.port || 52914}`;
+    const timeout = config.defaults?.timeoutMs ? Math.floor(config.defaults.timeoutMs / 1000) : 30;
 
-  const timeoutMatch = yaml.match(/timeout:\s*(\d+)/);
-  if (timeoutMatch) config.timeout = parseInt(timeoutMatch[1], 10);
-
-  return config;
+    return { endpoint, timeout };
+  } catch (err) {
+    console.error('Error parsing config:', err.message);
+    return null;
+  }
 }
 
 async function main() {

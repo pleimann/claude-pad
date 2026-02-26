@@ -11,6 +11,7 @@ const WebSocket = require('ws');
 const fs = require('fs');
 const path = require('path');
 const { randomUUID } = require('crypto');
+const yaml = require('yaml');
 
 // Read stdin
 let input = '';
@@ -26,55 +27,35 @@ process.stdin.on('end', async () => {
 });
 
 /**
- * Parse YAML frontmatter from .local.md file
+ * Parse config.yaml
  */
 function parseConfig(configPath) {
   if (!fs.existsSync(configPath)) {
     return null;
   }
 
-  const content = fs.readFileSync(configPath, 'utf8');
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
-  if (!match) return null;
+  try {
+    const content = fs.readFileSync(configPath, 'utf8');
+    const config = yaml.parse(content);
 
-  // Simple YAML parsing for our config format
-  const yaml = match[1];
-  const config = {};
-
-  // Parse endpoint
-  const endpointMatch = yaml.match(/endpoint:\s*(.+)/);
-  if (endpointMatch) config.endpoint = endpointMatch[1].trim();
-
-  // Parse timeout
-  const timeoutMatch = yaml.match(/timeout:\s*(\d+)/);
-  if (timeoutMatch) config.timeout = parseInt(timeoutMatch[1], 10);
-
-  // Parse categories
-  const categoriesMatch = yaml.match(/categories:\n((?:\s+-\s+.+\n?)+)/);
-  if (categoriesMatch) {
-    config.categories = categoriesMatch[1]
-      .split('\n')
-      .map(line => line.replace(/^\s+-\s+/, '').trim())
-      .filter(Boolean);
-  }
-
-  // Parse keys
-  const keysMatch = yaml.match(/keys:\n((?:\s+\w+:\n(?:\s+\w+:\s*.+\n?)+)+)/);
-  if (keysMatch) {
-    config.keys = {};
-    const keysBlock = keysMatch[1];
-    const keyMatches = keysBlock.matchAll(/(\w+):\n\s+action:\s*(\w+)\n\s+label:\s*"?([^"\n]+)"?/g);
-    for (const m of keyMatches) {
-      config.keys[m[1]] = { action: m[2], label: m[3].trim() };
+    if (!config || !config.server) {
+      return null;
     }
-  }
 
-  return config;
+    // Extract settings needed for WebSocket connection
+    const endpoint = `ws://${config.server.host || 'localhost'}:${config.server.port || 52914}`;
+    const timeout = config.defaults?.timeoutMs ? Math.floor(config.defaults.timeoutMs / 1000) : 30;
+
+    return { endpoint, timeout };
+  } catch (err) {
+    console.error('Error parsing config:', err.message);
+    return null;
+  }
 }
 
 async function main(hookInput) {
   const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const configPath = path.join(projectDir, '.claude', 'camel-pad.local.md');
+  const configPath = path.join(projectDir, 'config.yaml');
 
   const config = parseConfig(configPath);
   if (!config) {
@@ -96,15 +77,6 @@ async function main(hookInput) {
   // Extract notification info from hook input
   const notificationText = hookInput.notification_text || hookInput.message || '';
   const notificationCategory = hookInput.notification_category || hookInput.category || 'unknown';
-
-  // Check if this category should be forwarded
-  if (config.categories && config.categories.length > 0) {
-    if (!config.categories.includes(notificationCategory)) {
-      // Category not in filter list, pass through silently
-      console.log(JSON.stringify({ continue: true, suppressOutput: true }));
-      return;
-    }
-  }
 
   // Connect to WebSocket and send notification
   const messageId = randomUUID();

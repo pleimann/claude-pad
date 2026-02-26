@@ -1,104 +1,45 @@
 ---
-description: Use this skill when the user asks to "configure camel-pad", "set up camel-pad", "connect to macropad", or needs to configure the camel-pad bridge settings including endpoint URL, timeout, notification categories, or key mappings.
+description: Use this skill when the user asks to "configure camel-pad", "set up camel-pad", "connect to macropad", or needs to configure the camel-pad bridge settings including device, server port, timeout, or key mappings.
 ---
 
 # Configure camel-pad Bridge
 
-Guide the user through setting up the camel-pad bridge configuration.
+Guide the user through setting up the camel-pad bridge in `config.yaml`.
 
-## Configuration Files
+## Configuration File
 
-There are two configuration files:
-
-- **`config.yaml`** - Device settings for the camel-pad TypeScript bridge process
-- **`.claude/camel-pad.local.md`** - Plugin settings for the Claude Code integration
+All settings are stored in `config.yaml` which is read by the camel-pad bridge process.
 
 ## Instructions
 
-1. Read both configuration files to get current values:
-   - Read `config.yaml` for current device settings (vendorId, productId)
-   - Read `.claude/camel-pad.local.md` for plugin settings if it exists
+1. Read `config.yaml` to get current values
 
 2. Use AskUserQuestion to gather configuration:
 
-   **Bridge Device Settings:**
-   - Show the user the current `device.vendorId` and `device.productId` from `config.yaml`
+   **Device Settings:**
+   - Show the user the current `device.vendorId` and `device.productId`
    - Question: "The bridge uses these device identifiers to find the serial port. The defaults (0x303A / 0x1001) work for the Waveshare ESP32-S3-LCD-3.16. Do you need to change them?"
    - Options: "Use defaults (Recommended)", "Enter custom VID/PID"
    - If "Enter custom VID/PID", ask for vendorId and productId as hex values (e.g., 0x1234)
-   - Store the selected vendorId and productId
 
-   **Endpoint URL:**
-   - Question: "What is the WebSocket endpoint for camel-pad?"
-   - Options: "ws://localhost:52914" (default), "Custom URL"
-   - If custom, ask for the full URL
+   **Server Settings:**
+   - Question: "What port should the WebSocket server listen on?"
+   - Options: "52914 (Recommended)", "Custom port"
+   - If custom, ask for the port number
 
    **Timeout:**
-   - Question: "How many seconds should we wait for a response?"
-   - Options: "30 seconds", "60 seconds", "Custom"
-   - This is required, there is no default
+   - Question: "How many milliseconds should we wait for a response?"
+   - Options: "30000 (30 seconds)", "60000 (60 seconds)", "Custom"
 
-   **Notification Categories:**
-   - Question: "Which notification categories should be forwarded to camel-pad?"
-   - Options (multi-select): "permission_request", "task_complete", "error", "info", "All categories"
+   **Key Mappings (for Claude Code notifications):**
+   - Question: "Configure key1 press action for responding to notifications?"
+   - Options: "approve/Yes (Recommended)", "deny/No", "skip/Skip", "Custom"
+   - Repeat for key2 and key3
 
-   **Key Mappings:**
-   - Question: "Configure key mappings? (You can edit the config file later for advanced setup)"
-   - Options: "Use defaults (key1=approve, key2=deny, key3=skip)", "Configure now", "Skip for now"
-   - If "Configure now", ask for each key's action and label
+3. Update `config.yaml` with the new settings:
+   - Update device.vendorId and device.productId if changed
+   - Update server.port if changed
+   - Update defaults.timeoutMs
+   - Update keys.key1.press, keys.key2.press, keys.key3.press with action/label
 
-3. Write device settings to `config.yaml`:
-   - Use the Edit tool to update the device section in config.yaml
-   - Update vendorId and productId values (use uppercase hex format like 0x303A)
-   - Example edit - replace:
-     ```yaml
-     device:
-       vendorId: 0x1234
-       productId: 0x5678
-     ```
-     with the new values
-
-4. Write plugin settings to `.claude/camel-pad.local.md`:
-
-```markdown
----
-endpoint: [endpoint_url]
-timeout: [timeout_seconds]
-categories:
-  - [category1]
-  - [category2]
-keys:
-  key1:
-    action: [action]
-    label: "[label]"
-  key2:
-    action: [action]
-    label: "[label]"
-  key3:
-    action: [action]
-    label: "[label]"
----
-
-# camel-pad Bridge Plugin Configuration
-
-This file configures the camel-pad Claude Code plugin.
-Edit the YAML frontmatter above to change settings.
-
-## Settings Reference
-
-- `endpoint`: WebSocket URL for the camel-pad bridge server
-- `timeout`: Seconds to wait for a response from the device
-- `categories`: Which notification types to forward to camel-pad
-- `keys`: Button action mappings (action value and display label)
-
-## Note
-
-Device settings (vendorId, productId) are stored in `config.yaml`
-which is read by the camel-pad bridge process.
-```
-
-5. Confirm: "Configuration saved:
-   - Device settings → `config.yaml`
-   - Plugin settings → `.claude/camel-pad.local.md`"
-
-6. Suggest: "Run `/camel-pad:test` to verify connectivity."
+4. Confirm: "Configuration saved to `config.yaml`. Run `/camel-pad:test` to verify connectivity."
