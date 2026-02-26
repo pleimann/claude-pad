@@ -30,47 +30,46 @@ Bridge Claude Code notifications to the camel-pad device, displaying messages on
 
 ## Configuration
 
-Settings are stored in `.claude/camel-pad.local.md` with YAML frontmatter:
+All settings are stored in `config.yaml` which is read by both the camel-pad bridge and the plugin.
 
+The plugin uses these settings from `config.yaml`:
+- **server.host / server.port**: WebSocket endpoint (default: localhost:52914)
+- **defaults.timeoutMs**: Response timeout in milliseconds (default: 30000)
+- **keys.keyN.press**: Button mappings with action/label for notifications
+
+Example `config.yaml` (see main README for full config):
 ```yaml
----
-endpoint: ws://localhost:52914
-timeout: 30
-categories:
-  - permission_request
-  - task_complete
-  - error
+server:
+  host: localhost
+  port: 52914
+
+defaults:
+  timeoutMs: 30000
+
 keys:
   key1:
-    action: approve
-    label: "Yes"
+    press:
+      action: approve
+      label: "Yes"
   key2:
-    action: deny
-    label: "No"
+    press:
+      action: deny
+      label: "No"
   key3:
-    action: skip
-    label: "Skip"
----
+    press:
+      action: skip
+      label: "Skip"
 ```
-
-### Configuration Options
-
-| Option       | Description                             |
-| ------------ | --------------------------------------- |
-| `endpoint`   | WebSocket URL for camel-pad API         |
-| `timeout`    | Seconds to wait for response (required) |
-| `categories` | Notification categories to forward      |
-| `keys`       | Key-to-action mappings                  |
 
 ## Skills (Commands)
 
 The plugin provides skills that can be invoked as commands or triggered contextually:
 
-| Command                | Description                                                                                    |
-| ---------------------- | ---------------------------------------------------------------------------------------------- |
-| `/camel-pad:configure` | Interactive configuration - select HID device, set endpoint, timeout, categories, key mappings |
-| `/camel-pad:test`      | Test connectivity with camel-pad device                                                        |
-| `/camel-pad:send`      | Send a custom message to the camel-pad display                                                 |
+| Command                | Description                                                                       |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `/camel-pad:configure` | Interactive configuration - set device IDs, server port, timeout, key mappings    |
+| `/camel-pad:test`      | Test connectivity with camel-pad device                                           |
+| `/camel-pad:send`      | Send a custom message to the camel-pad display                                    |
 
 Skills are also triggered when you ask things like:
 
