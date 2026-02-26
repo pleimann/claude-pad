@@ -149,7 +149,7 @@ export class NotificationServer extends EventEmitter {
 
     pending.resolve(response);
 
-    // Emit event for next notification display
+    // Emit event for next notification display or clear if queue is empty
     if (this.notificationQueue.length > 0) {
       const nextId = this.notificationQueue[0];
       const next = this.pending.get(nextId);
@@ -161,6 +161,9 @@ export class NotificationServer extends EventEmitter {
           category: next.category,
         });
       }
+    } else {
+      // No more notifications — clear the display
+      this.emit('clear');
     }
 
     return true;

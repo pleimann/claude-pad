@@ -116,6 +116,13 @@ export async function startBridge(configPath: string): Promise<BridgeHandle> {
     serialDevice.sendText(message.text);
   });
 
+  // Clear display when all notifications are handled
+  notificationServer.on('clear', () => {
+    pushLog('out', 'clear', 'Display cleared after response');
+    console.log('Clearing display after response');
+    serialDevice.clearDisplay();
+  });
+
   // Config reload events
   configWatcher.on('reload', (newConfig) => {
     pushLog('sys', 'config', 'Configuration reloaded');
