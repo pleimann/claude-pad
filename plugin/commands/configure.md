@@ -8,11 +8,18 @@ Guide the user through setting up the camel-pad bridge in `config.yaml`.
 
 ## Configuration File
 
-All settings are stored in `config.yaml` which is read by the camel-pad bridge process.
+All settings are stored in the platform-specific config file which is read by the camel-pad bridge process:
+- macOS: `~/Library/Application Support/camel-pad/config.yaml`
+- Windows: `%APPDATA%\camel-pad\config.yaml`
+- Linux: `~/.config/camel-pad/config.yaml`
 
 ## Instructions
 
-1. Read `config.yaml` to get current values
+1. Get the config path by running:
+   ```bash
+   node plugin/hooks/scripts/config-path.js
+   ```
+   Then read that file to get current values
 
 2. Use AskUserQuestion to gather configuration:
 
@@ -36,10 +43,10 @@ All settings are stored in `config.yaml` which is read by the camel-pad bridge p
    - Options: "approve/Yes (Recommended)", "deny/No", "skip/Skip", "Custom"
    - Repeat for key2 and key3
 
-3. Update `config.yaml` with the new settings:
+3. Update the config file at the path obtained in step 1:
    - Update device.vendorId and device.productId if changed
    - Update server.port if changed
    - Update defaults.timeoutMs
    - Update keys.key1.press, keys.key2.press, keys.key3.press with action/label
 
-4. Confirm: "Configuration saved to `config.yaml`. Run `/camel-pad:test` to verify connectivity."
+4. Confirm: "Configuration saved to [config_path]. Run `/camel-pad:test` to verify connectivity."

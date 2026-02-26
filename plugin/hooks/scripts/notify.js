@@ -54,8 +54,8 @@ function parseConfig(configPath) {
 }
 
 async function main(hookInput) {
-  const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-  const configPath = path.join(projectDir, 'config.yaml');
+  const { getConfigPath } = require('./config-path');
+  const configPath = getConfigPath();
 
   const config = parseConfig(configPath);
   if (!config) {

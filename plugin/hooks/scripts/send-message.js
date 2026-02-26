@@ -11,6 +11,8 @@ const path = require('path');
 const { randomUUID } = require('crypto');
 const yaml = require('yaml');
 
+const { getConfigPath } = require('./config-path');
+
 const message = process.argv.slice(2).join(' ');
 
 if (!message) {
@@ -21,8 +23,7 @@ if (!message) {
   process.exit(1);
 }
 
-const projectDir = process.env.CLAUDE_PROJECT_DIR || process.cwd();
-const configPath = path.join(projectDir, 'config.yaml');
+const configPath = getConfigPath();
 
 function parseConfig(configPath) {
   if (!fs.existsSync(configPath)) {
