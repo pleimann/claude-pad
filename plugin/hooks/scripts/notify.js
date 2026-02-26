@@ -84,11 +84,15 @@ async function main(hookInput) {
 
   const timeoutMs = config.timeout * 1000;
   let timeoutId;
+  let resolved = false;
 
   const result = await new Promise((resolve, reject) => {
     timeoutId = setTimeout(() => {
-      ws.close();
-      reject(new Error(`Timeout waiting for response after ${config.timeout}s`));
+      if (!resolved) {
+        resolved = true;
+        ws.close();
+        reject(new Error(`Timeout waiting for response after ${config.timeout}s`));
+      }
     }, timeoutMs);
 
     ws.on('open', () => {
@@ -104,9 +108,12 @@ async function main(hookInput) {
       try {
         const response = JSON.parse(data.toString());
         if (response.type === 'response' && response.id === messageId) {
-          clearTimeout(timeoutId);
-          ws.close();
-          resolve(response);
+          if (!resolved) {
+            resolved = true;
+            clearTimeout(timeoutId);
+            ws.close();
+            resolve(response);
+          }
         }
       } catch (e) {
         // Ignore parse errors, wait for valid response
@@ -114,12 +121,19 @@ async function main(hookInput) {
     });
 
     ws.on('error', (err) => {
-      clearTimeout(timeoutId);
-      reject(new Error(`WebSocket error: ${err.message}`));
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        reject(new Error(`WebSocket error: ${err.message}`));
+      }
     });
 
     ws.on('close', () => {
-      clearTimeout(timeoutId);
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        reject(new Error('WebSocket closed before receiving response'));
+      }
     });
   });
 
